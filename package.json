@@ -1,0 +1,19 @@
+{
+  "name": "s2g-server",
+  "version": "0.0.0",
+  "description": "Server component of the Share2Give application.",
+  "main": "main.js",
+  "scripts": {
+    "test": "grunt mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:share2give/s2g-server.git"
+  },
+  "keywords": [
+    "share2give",
+    "server"
+  ],
+  "author": "Sebastien Martel <seb_martel@yahoo.com> (www.share2give.com)",
+  "license": "none"
+}
