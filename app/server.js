@@ -5,7 +5,7 @@
 module.exports = function(params) {
 
   // if process.env.NODE_ENV has not been set, default to development
-  var NODE_ENV = process.env.NODE_ENV || params.env || 'default';
+  var NODE_ENV = params.env || 'default';
 
   var path = require('path')
     , cluster = require('cluster')
@@ -25,7 +25,7 @@ module.exports = function(params) {
     });
 
     // start listening
-    var port = settings.server.port || params.port || 8000;
+    var port = params.port || process.env.PORT || settings.server.port || 8000;
 
     server.listen(port, function () {
       logger.info('%s listening at %s', server.name, server.url);
