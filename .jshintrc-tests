@@ -1,0 +1,15 @@
+{
+  "node": true,
+  "laxcomma": true,
+  "laxbreak": true,
+  "indent": 2,
+  "globalstrict": true,
+  "expr": true,
+  "globals": {
+  	/* CHAI */
+    "describe": false,
+    "before": false,
+    "after": false,
+    "it": false
+  }
+}
