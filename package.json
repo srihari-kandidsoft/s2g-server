@@ -40,6 +40,6 @@
     "jshint-stylish": "~0.1.5"
   },
   "engine": {
-    "node": "~0.10"
+    "node": "0.10.x"
   }
 }
