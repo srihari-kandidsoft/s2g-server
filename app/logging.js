@@ -24,7 +24,9 @@ function createLogger (config) {
     , logDir = config.dir || path.join(__dirname, 'logs')
     , logFile = path.join(logDir, appName + '-log.json')
     , logErrorFile = path.join(logDir, appName + '-errors.json')
-    , logLevel = config.level || 'debug';
+    , streamLogLevel = config.stream && config.stream.level || config.level || 'warn'
+    , fileLogLevel = config.file && config.file.level || config.level || 'debug'
+    , errLogLevel = config.error && config.error.level || config.level || 'error';
 
   // Create log directory if it doesnt exist
   if (! fs.existsSync(logDir)) fs.mkdirSync(logDir);
@@ -35,17 +37,17 @@ function createLogger (config) {
   , streams: [ 
       {
         stream: process.stdout
-      , level: 'warn'
+      , level: streamLogLevel
       }
     , { 
         path: logFile
-      , level: logLevel
+      , level: fileLogLevel
       , type: 'rotating-file'
       , period: '1d'
       }
     , { 
         path: logErrorFile
-      , level: 'error'
+      , level: errLogLevel
       }
     ]
   , serializers: bunyan.stdSerializers

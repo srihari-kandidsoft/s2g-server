@@ -15,5 +15,9 @@ production:
 test:
   server:
     port: 8123
+heroku:
+  logs:
+    stream:
+      level: info
 
 

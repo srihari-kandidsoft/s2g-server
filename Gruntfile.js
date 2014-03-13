@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     forever: {
       server: {
         options: {
-          index: 'server.js',
+          index: 'main.js',
           logFile: 'forever.log',
           errFile: 'forever.log',
           command: 'node'
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
     watch: {
       jshint: {
         files: ['app/**/*.js', '.jshintrc'],
-        tasks: ['jshint:sources', 'mochaTest' , 'forever:server:restart' ]
+        tasks: ['jshint:sources', 'mochaTest' /*, 'forever:server:restart'*/ ]
       },
       jshintTest: { // test updates don't require a server restart.
         files: ['spec/**/*.js', '.jshintrc-tests'],

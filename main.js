@@ -12,7 +12,7 @@ var getArg = function(a, args) {
 
 var server = require('./app/server.js');
 var params = {
-  "env": getArg('--env', process.argv) || process.env.NODE_ENV || 8000
+  "env": getArg('--env', process.argv) || process.env.NODE_ENV || 'default'
 }
 var app = server(params);
 
