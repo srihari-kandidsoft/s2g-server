@@ -1,8 +1,8 @@
 {
-  "name": "server",
+  "name": "s2g-server",
   "version": "0.0.1",
-  "description": "Restify seed project",
-  "main": "server.js",
+  "description": "Share2Give server",
+  "main": "main.js",
   "scripts": {
     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log main.js",
     "stop": "./node_modules/.bin/forever stop main.js",
@@ -11,16 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:sebmartel/restify-seed.git"
+    "url": "git@bitbucket.org:share2give/s2g-server.git"
   },
   "keywords": [
-    "restify-seed",
-    "restify",
-    "server"
+    "share2give",
+    "s2g",
   ],
-  "author": "Sebastien Martel <seb_martel@yahoo.com> (https://github.com/sebmartel)",
+  "author": "Sebastien Martel <seb_martel@yahoo.com> (https://www.share2give.com)",
   "licenses": {
-    "type": "MIT"
+    "type": ""
   },
   "dependencies": {
     "restify": "~2.6.3",
