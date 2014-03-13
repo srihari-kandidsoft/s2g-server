@@ -1,0 +1,19 @@
+default:
+  server:
+    port: 8000
+    cluster: false
+  logs:
+    # log directory
+    dir: logs
+    # for valid log levels, see [bunyan docs](https://github.com/trentm/node-bunyan#levels)
+    level: debug
+production:
+  server:
+    cluster: true
+  logs:
+    level: info
+test:
+  server:
+    port: 8123
+
+

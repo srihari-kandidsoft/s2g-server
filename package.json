@@ -1,10 +1,13 @@
 {
   "name": "s2g-server",
-  "version": "0.0.0",
-  "description": "Server component of the Share2Give application.",
+  "version": "0.0.1",
+  "description": "Share2Give server",
   "main": "main.js",
   "scripts": {
-    "test": "grunt mocha"
+    "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log main.js",
+    "stop": "./node_modules/.bin/forever stop main.js",
+    "status": "./node_modules/.bin/forever list",
+    "test": "./node_modules/.bin/mocha -R spec spec/*Spec.js"
   },
   "repository": {
     "type": "git",
@@ -12,8 +15,31 @@
   },
   "keywords": [
     "share2give",
-    "server"
+    "s2g",
   ],
-  "author": "Sebastien Martel <seb_martel@yahoo.com> (www.share2give.com)",
-  "license": "none"
+  "author": "Sebastien Martel <seb_martel@yahoo.com> (https://www.share2give.com)",
+  "licenses": {
+    "type": ""
+  },
+  "dependencies": {
+    "restify": "~2.6.3",
+    "bunyan": "~0.22.1",
+    "yaml-config": "~0.3.0",
+    "forever": "~0.10.11"
+  },
+  "devDependencies": {
+    "mocha": "~1.17.1",
+    "chai": "~1.9.0",
+    "sinon": "~1.9.0",
+    "supertest": "~0.9.0",
+    "grunt": "~0.4.4",
+    "grunt-forever": "~0.4.2",
+    "grunt-mocha-test": "~0.9.4",
+    "grunt-contrib-jshint": "~0.9.2",
+    "grunt-contrib-watch": "~0.6.0",
+    "jshint-stylish": "~0.1.5"
+  },
+  "engine": {
+    "node": "~0.10"
+  }
 }
