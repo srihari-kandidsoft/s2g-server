@@ -25,7 +25,8 @@
     "restify": "~2.6.3",
     "bunyan": "~0.22.1",
     "yaml-config": "~0.3.0",
-    "forever": "~0.10.11"
+    "forever": "~0.10.11",
+    "newrelic": "^1.4.0"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
