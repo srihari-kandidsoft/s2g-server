@@ -16,6 +16,8 @@ test:
   server:
     port: 8123
 heroku:
+  server:
+    cluster: true
   logs:
     stream:
       level: info
