@@ -8,7 +8,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name : Share2Give,
+  app_name : 'Share2Give',
   /**
    * Your New Relic license key.
    */
