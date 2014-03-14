@@ -1,6 +1,8 @@
 Share2Give Server
 ========================
 
+[![Build Status](https://drone.io/bitbucket.org/share2give/s2g-server/status.png)](https://drone.io/bitbucket.org/share2give/s2g-server/latest)
+
 ### Usage 
 
 ```bash
