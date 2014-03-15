@@ -38,5 +38,6 @@ describe('Route', function () {
   });
 
   require('./route.test.js')(request,url);
+  require('./route.version.js')(request,url);
 
 });

@@ -13,7 +13,7 @@ module.exports = function(params) {
     , worker = require('./worker')
     , logging = require('./logging');
 
-  params["settings"] = config.readConfig(path.join(__dirname, '../config.yaml'), NODE_ENV);
+  params.settings = config.readConfig(path.join(__dirname, '../config.yaml'), NODE_ENV);
 
   function spawnWorker (logger) {
 

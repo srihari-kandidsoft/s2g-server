@@ -2,3 +2,4 @@ node_modules/
 forever.log
 logs/
 newrelic_agent.log
+forever/
