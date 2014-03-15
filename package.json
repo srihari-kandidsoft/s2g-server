@@ -7,7 +7,7 @@
     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log main.js",
     "stop": "./node_modules/.bin/forever stop main.js",
     "status": "./node_modules/.bin/forever list",
-    "test": "./node_modules/.bin/mocha -R spec spec/*Spec.js"
+    "test": "./node_modules/.bin/mocha -R spec spec/**/*Spec.js"
   },
   "repository": {
     "type": "git",
