@@ -10,9 +10,10 @@ module.exports = function(params) {
   var path = require('path')
     , cluster = require('cluster')
     , config = require('yaml-config')
-    , settings = config.readConfig(path.join(__dirname, '../config.yaml'), NODE_ENV)
     , worker = require('./worker')
     , logging = require('./logging');
+
+  params.settings = config.readConfig(path.join(__dirname, '../config.yaml'), NODE_ENV);
 
   function spawnWorker (logger) {
 
@@ -25,7 +26,7 @@ module.exports = function(params) {
     });
 
     // start listening
-    var port = params.port || process.env.PORT || settings.server.port || 8000;
+    var port = params.port || process.env.PORT || params.settings.server.port || 8000;
 
     server.listen(port, function () {
       logger.info('%s listening at %s', server.name, server.url);
@@ -50,13 +51,13 @@ module.exports = function(params) {
       });
 
       // if a worker dies, respawn
-      cluster.on('death', function (worker) {
+      cluster.on('exit', function (worker, code, signal) {
         logger.warn('Worker ' + worker.id + ' died, restarting...');
         cluster.fork();
       });
 
-      cluster.on('close', function (worker) {
-        logger.warn('Worker ' + worker.id + ' closed. Not restarting.');
+      cluster.on('disconnect', function (worker) {
+        logger.warn('Worker ' + worker.id + ' disconnected.');
       });
     } 
     // Worker processes
@@ -68,11 +69,10 @@ module.exports = function(params) {
   function doRun (cluster) {
 
     // Set up logging
-    var logger = logging.createLogger(settings.logs);
+    var logger = logging.createLogger(params.settings.logs, NODE_ENV);
 
     // In production environment, create a cluster
-    if (NODE_ENV === 'production' || Boolean(settings.server.cluster) || cluster ) {
-      console.log("creating cluster");
+    if (NODE_ENV === 'production' || Boolean(params.settings.server.cluster) || cluster ) {
       createCluster(logger);
     }
     else {

@@ -19,6 +19,8 @@ test:
     stream: 
       level: warn  
 heroku:
+  server:
+    cluster: true
   logs:
     stream:
       level: info

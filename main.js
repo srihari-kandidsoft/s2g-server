@@ -1,4 +1,5 @@
 'use strict';
+require('newrelic');
 
 var getArg = function(a, args) {
     var res;

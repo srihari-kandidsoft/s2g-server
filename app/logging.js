@@ -16,7 +16,7 @@ exports.createLogger = createLogger;
  * @param {Object} config The configuration object for defining dir: log directory, level: loglevel
  * @return the created logger instance
  */
-function createLogger (config) {
+function createLogger (config, environment) {
 
   var pkg = require('../package')
     , appName = pkg.name
@@ -54,7 +54,7 @@ function createLogger (config) {
   });
 
   log.info('Starting ' + appName + ', version ' + appVersion);
-  log.info('Environment set to ' + process.env.NODE_ENV);
+  log.info('Environment set to ' + environment);
   log.debug('Logging setup completed.');
   
   return log;

@@ -35,6 +35,8 @@ function createServer (logger) {
   
   // DEFINE ROUTES
   
+  require( './v0/version.js' )(restify, server);
+
   // sample route
   // USAGE EXAMPLE: /test
   server.get('/test', function (req, res, next) {

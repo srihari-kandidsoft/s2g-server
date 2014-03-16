@@ -1,13 +1,15 @@
 {
   "name": "s2g-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Share2Give server",
   "main": "main.js",
   "scripts": {
     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log main.js",
     "stop": "./node_modules/.bin/forever stop main.js",
     "status": "./node_modules/.bin/forever list",
-    "test": "./node_modules/.bin/mocha -R spec spec/*Spec.js"
+    "mocha": "./node_modules/.bin/mocha -R spec spec/**/*Spec.js",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec spec/**/*Spec.js",
+    "coverage": "./node_modules/.bin/istanbul check-coverage --statements 79 --branches 51 --functions 82 --lines 81"
   },
   "repository": {
     "type": "git",
@@ -25,7 +27,8 @@
     "restify": "~2.6.3",
     "bunyan": "~0.22.1",
     "yaml-config": "~0.3.0",
-    "forever": "~0.10.11"
+    "forever": "~0.10.11",
+    "newrelic": "^1.4.0"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
@@ -37,7 +40,10 @@
     "grunt-contrib-jshint": "~0.9.2",
     "grunt-contrib-watch": "~0.6.0",
     "jshint-stylish": "~0.1.5",
-    "grunt-forever": "^0.4.4"
+    "grunt-forever": "^0.4.4",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-mocha-istanbul": "^1.1.0",
+    "istanbul": "^0.2.6"
   },
   "engine": {
     "node": "0.10.x"
