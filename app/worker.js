@@ -3,7 +3,8 @@
 'use strict';
 
 var path = require('path')
-  , restify = require('restify');
+  , restify = require('restify')
+  , lib = require('./register_user');
 
 
 exports.createServer = createServer;
@@ -44,5 +45,7 @@ function createServer (logger) {
     return next();
   });
 
+  server.get('/register_user', lib.register_user);
+  
   return server;
 }
