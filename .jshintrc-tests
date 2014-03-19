@@ -10,6 +10,9 @@
     "describe": false,
     "before": false,
     "after": false,
-    "it": false
+    "it": false,
+    "beforeEach": false,
+    /* Custom */
+    "appquire": false
   }
 }

@@ -1,4 +1,6 @@
-default:
+default: 
+  mongo:
+    db: 'mongodb://s2g-server:share2give@oceanic.mongohq.com:10094/roquefort'
   server:
     port: 8000
     cluster: false
@@ -15,6 +17,9 @@ production:
 test:
   server:
     port: 8123
+  logs:
+    stream:
+      level: warn
 heroku:
   server:
     cluster: true
