@@ -4,11 +4,17 @@
 
 var fs = require('fs')
   , path = require('path')
-  , config = require('yaml-config')
   , bunyan = require('bunyan');
 
+var myLogger;
 
 exports.createLogger = createLogger;
+exports.set = function(logger) {
+  myLogger = logger;
+};
+exports.get = function() {
+  return myLogger;
+};
 
 
 /*

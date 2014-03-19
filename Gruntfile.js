@@ -71,11 +71,11 @@ module.exports = function(grunt) {
     watch: {
       jshint: {
         files: ['app/**/*.js', '.jshintrc'],
-        tasks: ['jshint:sources', 'coverage', 'forever:server:restart']
+        tasks: ['jshint:sources', 'mochaTest', 'coverage', 'forever:server:restart']
       },
       jshintTest: { // test updates don't require a server restart.
         files: ['spec/**/*.js', '.jshintrc-tests'],
-        tasks: ['jshint:tests', 'coverage']
+        tasks: ['jshint:tests', 'mochaTest', 'coverage']
       },
       grunt: {
         files: ['Gruntfile.js'],
