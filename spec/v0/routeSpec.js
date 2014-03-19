@@ -14,12 +14,12 @@ var util = require('util')
   , url = 'http://localhost:' + settings.server.port;
 
 describe('Route', function () {
-  var server;
+  var app;
 
   before(function (done) {
 
     var server = require('../../app/server');
-    var app = server( {'env':'test'} );
+    app = server( {'env':'test'} );
     app.run();
 
     // make sure the server is started
@@ -39,5 +39,13 @@ describe('Route', function () {
 
   require('./route.test.js')(request,url);
   require('./route.version.js')(request,url);
+  require('./route.neighborhoods.js')(request,url);
+
+  after(function(done) {
+    app.close(function() {
+      done();
+    });
+  });
 
 });
+
