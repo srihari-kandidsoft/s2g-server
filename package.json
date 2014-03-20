@@ -7,8 +7,8 @@
     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log main.js",
     "stop": "./node_modules/.bin/forever stop main.js",
     "status": "./node_modules/.bin/forever list",
-    "mocha": "if [ -z \"$NODE_ENV\" ]; then NODE_ENV=test; fi; ./node_modules/.bin/mocha -R spec test/**/*Spec.js",
-    "test": "if [ -z \"$NODE_ENV\" ]; then NODE_ENV=test; fi; ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec test/**/*Spec.js",
+    "mocha": "./node_modules/.bin/mocha -R spec test/**/*Spec.js",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec test/**/*Spec.js",
     "coverage": "./node_modules/.bin/istanbul check-coverage --statements 79 --branches 51 --functions 82 --lines 81"
   },
   "repository": {
