@@ -49,17 +49,14 @@ function createServer (logger) {
   
   require( './v0/version.js' )(restify, server);
   require( './v0/neighborhoods.js' )( restify, server);
-
-
-
+  require('./v0/register_user.js')(restify, server);
+  
   // sample route
   // USAGE EXAMPLE: /test
   server.get('/test', function (req, res, next) {
     res.send({'result': 'test'});      
     return next();
   });
-
-  server.get('/register_user', lib.register_user);
   
   return server;
 }
