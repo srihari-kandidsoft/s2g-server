@@ -51,7 +51,7 @@ module.exports = function(grunt) {
       tests: {
         options: {
           reporter: require('jshint-stylish'),
-          jshintrc: '.jshintrc-tests'
+          jshintrc: 'test/.jshintrc'
         },
         files: {
           src: ['test/**/*.js']
@@ -81,7 +81,7 @@ module.exports = function(grunt) {
         tasks: ['env', 'jshint:sources', 'mochaTest', 'mocha_istanbul', 'forever:server:restart']
       },
       jshintTest: { // test updates don't require a server restart.
-        files: ['test/**/*.js', '.jshintrc-tests'],
+        files: ['test/**/*.js', 'test/.jshintrc'],
         tasks: ['env', 'jshint:tests', 'mochaTest', 'mocha_istanbul']
       },
       grunt: {
