@@ -2,7 +2,7 @@
 
 module.exports = function(request, url) {
   function getVersion() {
-    return require('../../package.json').version;
+    return require('../../../package.json').version;
   }
   describe( 'GET /version', function() {
     it('should return the current version number', function (done) {

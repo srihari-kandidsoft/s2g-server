@@ -13,8 +13,6 @@ module.exports = function(params) {
     , worker = require('./worker')
     , logging = require('./logging')
     ;
-    
-  require('./appquire.js');
 
   var singleServer;
   function spawnWorker (logger) {
