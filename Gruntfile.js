@@ -78,7 +78,7 @@ module.exports = function(grunt) {
     watch: {
       jshint: {
         files: ['main.js', 'app/**/*.js', '.jshintrc'],
-        tasks: ['env', 'jshint:sources', 'mochaTest', 'mocha_istanblul', 'forever:server:restart']
+        tasks: ['env', 'jshint:sources', 'mochaTest', 'mocha_istanbul', 'forever:server:restart']
       },
       jshintTest: { // test updates don't require a server restart.
         files: ['test/**/*.js', '.jshintrc-tests'],
