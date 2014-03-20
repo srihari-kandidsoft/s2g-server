@@ -1,4 +1,6 @@
-default:
+default: 
+  mongo:
+    db: 'mongodb://s2g-server:share2give@oceanic.mongohq.com:10094/roquefort'
   server:
     port: 8000
     cluster: false
@@ -12,12 +14,22 @@ production:
     cluster: true
   logs:
     level: info
-test:
+ # a.k.a integration- this tests all dependant system
+test:       
   server:
     port: 8123
   logs:
-    stream: 
-      level: warn  
+    stream:
+      level: warn
+# development has only localhost network dependencies. Meant for lean and mean dev cycle.      
+development: 
+  server:
+    port: 8123
+  mongo:
+    db: 'mongodb://localhost'
+  logs:
+    stream:
+      level: warn
 heroku:
   server:
     cluster: true

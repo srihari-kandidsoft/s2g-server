@@ -4,11 +4,13 @@
 
 var path = require('path')
   , restify = require('restify')
-  , lib = require('./register_user');
-
+  , mongoose = require('mongoose')
+  , settings = require('./settings').get()
+  , restify = require('restify')
+  , lib = require('./register_user')
+  ;
 
 exports.createServer = createServer;
-
 
 /*
  * Set up server
@@ -33,10 +35,22 @@ function createServer (logger) {
   });
   
   if (logger) server.on('after', restify.auditLogger({ log: logger }));
+
+  // INIT MONGO
+  mongoose.connect(settings.mongo.db);
+  mongoose.connection.on('error', function(err) {
+    logger.error('Mongoose connection error: %s', err);
+  });
+  mongoose.connection.on('open;', function(err) {
+    logger.info('Mongoose connection opened.');
+  });
   
   // DEFINE ROUTES
   
   require( './v0/version.js' )(restify, server);
+  require( './v0/neighborhoods.js' )( restify, server);
+
+
 
   // sample route
   // USAGE EXAMPLE: /test
