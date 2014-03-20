@@ -7,7 +7,6 @@ var path = require('path')
   , mongoose = require('mongoose')
   , settings = require('./settings').get()
   , restify = require('restify')
-  , lib = require('./register_user')
   ;
 
 exports.createServer = createServer;
@@ -49,7 +48,7 @@ function createServer (logger) {
   
   require( './v0/version.js' )(restify, server);
   require( './v0/neighborhoods.js' )( restify, server);
-  require('./v0/register_user.js')(restify, server);
+  require( './v0/register_user.js' )(restify, server);
   
   // sample route
   // USAGE EXAMPLE: /test

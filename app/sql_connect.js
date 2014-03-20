@@ -6,6 +6,7 @@ var path = require('path');
 
 var settings = config.readConfig(path.join(__dirname, '../config.yaml'), 'default');
 
+/* istanbul ignore next */
 module.exports = {
   query: function (query, res, next) {
     get_connection(function (connection) {
