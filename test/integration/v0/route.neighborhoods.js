@@ -2,7 +2,7 @@
 
 
 var chai = require('chai');
-var api_assertions = require('../lib/apiJsonChai.js');
+var api_assertions = require('../../lib/apiJsonChai.js');
 var expect = chai.expect;
 
 chai.use( api_assertions );

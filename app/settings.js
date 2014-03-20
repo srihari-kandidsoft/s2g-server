@@ -7,6 +7,7 @@ exports.test = config.readConfig(path.join(__dirname, '../config.yaml'), 'test')
 exports.production = config.readConfig(path.join(__dirname, '../config.yaml'), 'production');
 exports.heroku = config.readConfig(path.join(__dirname, '../config.yaml'), 'heroku');
 exports.default = config.readConfig(path.join(__dirname, '../config.yaml'), 'default');
+exports.development = config.readConfig(path.join(__dirname, '../config.yaml'), 'development');
 
 var current;
 

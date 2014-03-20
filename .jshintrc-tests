@@ -11,8 +11,6 @@
     "before": false,
     "after": false,
     "it": false,
-    "beforeEach": false,
-    /* Custom */
-    "appquire": false
+    "beforeEach": false
   }
 }

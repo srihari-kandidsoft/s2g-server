@@ -14,9 +14,19 @@ production:
     cluster: true
   logs:
     level: info
-test:
+ # a.k.a integration- this tests all dependant system
+test:       
   server:
     port: 8123
+  logs:
+    stream:
+      level: warn
+# development has only localhost network dependencies. Meant for lean and mean dev cycle.      
+development: 
+  server:
+    port: 8123
+  mongo:
+    db: 'mongodb://localhost'
   logs:
     stream:
       level: warn

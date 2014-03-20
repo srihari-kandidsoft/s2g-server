@@ -5,6 +5,5 @@
   "indent": 2,
   "globalstrict": true,
   "globals": {
-  	"appquire": false
   }
 }
