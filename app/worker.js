@@ -46,9 +46,10 @@ function createServer (logger) {
   
   // DEFINE ROUTES
   
-  require( './v0/version.js' )(restify, server);
-  require( './v0/neighborhoods.js' )( restify, server);
-  require( './v0/register_user.js' )(restify, server);
+  require( './v0/version.js' )(server);
+  require( './v0/neighborhoods.js' )(server);
+  require( './v0/register_user.js' )(server);
+  require( './v0/accounts/post.js' )(server);
   
   // sample route
   // USAGE EXAMPLE: /test

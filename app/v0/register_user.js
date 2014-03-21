@@ -1,9 +1,8 @@
-/* istanbul ignore next */
 'use strict';
 /* istanbul ignore next */
 var sql = require('../sql_connect');
 /* istanbul ignore next */
-module.exports = function (restify, server) {
+module.exports = function (server) {
   server.post('/v0/register_user', function (req, res, next) {
     var query = "INSERT INTO Users(Email, Password) VALUES('" + req.params.email_id +
       "','" + req.params.password + "')";

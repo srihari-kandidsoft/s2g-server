@@ -2,8 +2,8 @@
 
 var Neighborhood = require( '../model/neighborhood.js');
 
-module.exports = function(restify,server) {
-  server.get('/neighborhoods', function(req, res, next) {
+module.exports = function(server) {
+  server.get('/v0/neighborhoods', function(req, res, next) {
     Neighborhood.find().exec( function(err, d) {
       var reply = { 
         status: 'success',
