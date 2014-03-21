@@ -9,14 +9,29 @@ default:
     dir: logs
     # for valid log levels, see [bunyan docs](https://github.com/trentm/node-bunyan#levels)
     level: debug
+  mysql:
+    host: 'share2give-db-instance.caobw7uurd0v.us-west-1.rds.amazonaws.com'
+    password: 'share2give2014'
+    user: 'share2give'
+    database: 'share2give_db'
 production:
   server:
     cluster: true
   logs:
     level: info
-test:
+ # a.k.a integration- this tests all dependant system
+test:       
   server:
     port: 8123
+  logs:
+    stream:
+      level: warn
+# development has only localhost network dependencies. Meant for lean and mean dev cycle.      
+development: 
+  server:
+    port: 8123
+  mongo:
+    db: 'mongodb://localhost'
   logs:
     stream:
       level: warn

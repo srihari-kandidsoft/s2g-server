@@ -6,6 +6,7 @@ var path = require('path')
   , restify = require('restify')
   , mongoose = require('mongoose')
   , settings = require('./settings').get()
+  , restify = require('restify')
   ;
 
 exports.createServer = createServer;
@@ -27,7 +28,6 @@ function createServer (logger) {
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
 
-
   server.on('NotFound', function (req, res, next) {
     if (logger) logger.debug('404', 'Request for ' + req.url + ' not found. No route.');
     res.send(404, req.url + ' was not found');
@@ -46,17 +46,17 @@ function createServer (logger) {
   
   // DEFINE ROUTES
   
-  require( './v0/version.js' )(restify, server);
-  require( './v0/neighborhoods.js' )( restify, server);
-
-
-
+  require( './v0/version.js' )(server);
+  require( './v0/neighborhoods.js' )(server);
+  require( './v0/register_user.js' )(server);
+  require( './v0/accounts/post.js' )(server);
+  
   // sample route
   // USAGE EXAMPLE: /test
   server.get('/test', function (req, res, next) {
     res.send({'result': 'test'});      
     return next();
   });
-
+  
   return server;
 }

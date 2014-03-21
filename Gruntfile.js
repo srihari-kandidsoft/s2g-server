@@ -7,8 +7,20 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-istanbul');
+  grunt.loadNpmTasks('grunt-env');
 
   grunt.initConfig({
+
+    env: {
+      watch: {
+        NODE_ENV: grunt.option('env') || 'test',
+        PORT: 8124
+      },
+      dev: {
+        NODE_ENV: grunt.option('env') || 'test',
+        PORT: ''
+      }
+    },
 
     //     "start": "./node_modules/.bin/forever start --append -o ./forever.log -e ./forever.log server.js",
     forever: {
@@ -27,7 +39,7 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['spec/**/*.js']
+        src: ['test/**/*.js']
       }
     },
 
@@ -44,25 +56,25 @@ module.exports = function(grunt) {
       tests: {
         options: {
           reporter: require('jshint-stylish'),
-          jshintrc: '.jshintrc-tests'
+          jshintrc: 'test/.jshintrc'
         },
         files: {
-          src: ['spec/**/*.js']
+          src: ['test/**/*.js']
         }
       }
     },
 
     mocha_istanbul: {
       coverage: {
-        src: 'spec', // the folder, not the files,
+        src: 'test', // the folder, not the files,
         options: {
           reporter: 'spec',
           mask: '**/*Spec.js',
           check: {
-            lines: '81',
             statements: '79',
-            branches: '51',
-            functions: '81'
+            branches: '56',
+            functions: '64',
+            lines: '79'
           }
         }
       }
@@ -70,12 +82,12 @@ module.exports = function(grunt) {
 
     watch: {
       jshint: {
-        files: ['app/**/*.js', '.jshintrc'],
-        tasks: ['jshint:sources', 'mochaTest', 'coverage', 'forever:server:restart']
+        files: ['main.js', 'app/**/*.js', '.jshintrc'],
+        tasks: ['env:watch', 'jshint:sources', 'mochaTest', 'mocha_istanbul', 'env:dev', 'forever:server:restart']
       },
       jshintTest: { // test updates don't require a server restart.
-        files: ['spec/**/*.js', '.jshintrc-tests'],
-        tasks: ['jshint:tests', 'mochaTest', 'coverage']
+        files: ['test/**/*.js', 'test/.jshintrc'],
+        tasks: ['env:watch', 'jshint:tests', 'mochaTest', 'mocha_istanbul']
       },
       grunt: {
         files: ['Gruntfile.js'],
@@ -85,5 +97,7 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.registerTask('coverage', ['mocha_istanbul']);
+  grunt.registerTask('coverage', ['env:dev','mocha_istanbul']);
+  grunt.registerTask('test', ['env:dev','mochaTest' ]);
+
 };

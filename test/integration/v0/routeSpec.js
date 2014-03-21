@@ -4,22 +4,23 @@
  * This one configures and starts a test server then
  * requires all the route.**.js files and runs them.
  */
+
 var util = require('util')
   , path = require('path')
   , fs = require('fs')
-  , settings = require('yaml-config').readConfig(path.join(__dirname, '../..', 'config.yaml'), 'test')
   , should = require('chai').should()
+  , settings = require('../../../app/settings').set(process.env.NODE_ENV || 'test').get()
   , expect = require('chai').expect
   , request = require('supertest') 
-  , url = 'http://localhost:' + settings.server.port;
+  , url = 'http://localhost:' + ( process.env.PORT || settings.server.port);
 
 describe('Route', function () {
   var app;
 
   before(function (done) {
 
-    var server = require('../../app/server');
-    app = server( {'env':'test'} );
+    var server = require('../../../app/server');
+    app = server( {'env': process.env.NODE_ENV || 'test' } );
     app.run();
 
     // make sure the server is started
@@ -39,6 +40,7 @@ describe('Route', function () {
 
   require('./route.test.js')(request,url);
   require('./route.version.js')(request,url);
+  require('./route.account.create.js')(request,url);
   require('./route.neighborhoods.js')(request,url);
 
   after(function(done) {

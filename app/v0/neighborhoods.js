@@ -1,26 +1,20 @@
 "use strict";
 
-var mongoose = require('mongoose');
+var Neighborhood = require( '../model/neighborhood.js');
 
-var Neighborhood = appquire( './model/neighborhood.js');
-
-module.exports = function(restify,server) {
-  server.get('/neighborhoods', function(req, res, next) {
-    try {
-      Neighborhood.find().exec( function(err, d) {
-        var reply = { 
-          status: 'success',
-          data: d
-        };
-        if ( err ) {
-          reply.status = 'error';
-          reply.message = err;
-        }
-        res.send( reply );
-        return next();      
-      });
-    } catch (e) {
-      console.log(e);
-    }
+module.exports = function(server) {
+  server.get('/v0/neighborhoods', function(req, res, next) {
+    Neighborhood.find().exec( function(err, d) {
+      var reply = { 
+        status: 'success',
+        data: d
+      };
+      if ( err ) {
+        reply.status = 'error';
+        reply.message = err;
+      }
+      res.send( reply );
+      next();      
+    });
   });
 };
