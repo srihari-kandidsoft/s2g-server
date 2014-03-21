@@ -12,7 +12,9 @@ var options = {
   capped: 1024, // Use it for circular buffers, can be set to a literal 
                 // eg: {size: 1024, max: 1000, autoIndex: true}
   collection: 'neighborhoods_test', // specify if you need a different collection name.
-  id: false,    // Defaults to true. Disables the _id field
+  id: false,    // Defaults to true. Renames or Disables a virtual 'id' field
+                // accessible from the model.
+  _id: false,   // 
   read: '...',  // Controls read behavior. See http://mongoosejs.com/docs/guide.html#read
   safe: true,   // Controls write policy. See http://mongoosejs.com/docs/guide.html#safe
   shardKey: {}, // Used when sharding to specify which shard to use.
@@ -24,33 +26,8 @@ var options = {
 };
 */
 
-var Neighborhood = new Schema({
-  name: String,
-  city: String,
-  country: String,
-  state: {
-    short: String,
-    long: String
-  }
-  //, adjacent: { type: [String], index: true} // field level
-});
+var Account = new Schema({
+  email: { type: String, unique: true, index: true }
+} );
 
-Neighborhood.statics.createAndSave = function(spec, cb) {
-  var n = new Neighborhood(spec);
-  n.save(function(err,result) {
-    cb(err,result);
-  });
-  return n;
-};
-/*
-Neighborhood.methods.findSimilar = function(cb) {
-  return this.model('Neighborhood').find({city: this.city}, cb);
-};
-
-Neighborhood.index({name: 1, type: -1}); // schema level
-
-Neighborhood.virtual('composedName').get( function(){
-  return util.format( '%s - %s, %s.', this.name, this.city, this.state.short );
-});
-*/
-module.exports = mongoose.model('Neighborhood', Neighborhood);
+module.exports = mongoose.model('Account', Account); 

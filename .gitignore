@@ -5,3 +5,4 @@ newrelic_agent.log
 forever/
 .DS_Store
 coverage/
+npm-debug.log

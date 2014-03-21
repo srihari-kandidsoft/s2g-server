@@ -28,8 +28,8 @@ describe('route /v0/neighborhoods.js', function() {
 
   it('registers a GET callback', function() {
     server = { get: sinon.spy() };
-    var route = routeBuilder(null, server);
-    server.get.should.have.been.calledWith( '/neighborhoods');
+    var route = routeBuilder(server);
+    server.get.should.have.been.calledWith( '/v0/neighborhoods');
     cb = server.get.args[0][1];
   });
 

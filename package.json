@@ -29,7 +29,8 @@
     "yaml-config": "~0.3.0",
     "forever": "~0.10.11",
     "newrelic": "^1.4.0",
-    "mongoose": "^3.8.8"
+    "mongoose": "^3.8.8",
+    "mysql": "^2.1.1"
   },
   "devDependencies": {
     "mocha": "~1.17.1",

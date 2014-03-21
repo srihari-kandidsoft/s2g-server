@@ -9,6 +9,11 @@ default:
     dir: logs
     # for valid log levels, see [bunyan docs](https://github.com/trentm/node-bunyan#levels)
     level: debug
+  mysql:
+    host: 'share2give-db-instance.caobw7uurd0v.us-west-1.rds.amazonaws.com'
+    password: 'share2give2014'
+    user: 'share2give'
+    database: 'share2give_db'
 production:
   server:
     cluster: true
