@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , crypto = require('crypto')
   ;
 
 /** Options: 
@@ -27,7 +28,17 @@ var options = {
 */
 
 var Account = new Schema({
-  email: { type: String, unique: true, index: true }
+  email: { type: String, unique: true, index: true },
+  passwordHash: { type: String }
 } );
+
+Account.statics.hashPassword = function(password) {
+  var key = '616f6a1f92059a2c8ed1ba1b45e26335'
+    , hash = null;
+  if ( password ) {
+    hash = crypto.createHmac('sha1', key).update(password).digest('hex');
+  }
+  return hash;
+};
 
 module.exports = mongoose.model('Account', Account); 
