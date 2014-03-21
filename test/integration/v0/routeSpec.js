@@ -13,7 +13,7 @@ var util = require('util')
   , settings = require('../../../app/settings').set(process.env.NODE_ENV || 'test').get()
   , expect = require('chai').expect
   , request = require('supertest') 
-  , url = 'http://localhost:' + settings.server.port;
+  , url = 'http://localhost:' + ( process.env.PORT || settings.server.port);
 
 describe('Route', function () {
   var app;
