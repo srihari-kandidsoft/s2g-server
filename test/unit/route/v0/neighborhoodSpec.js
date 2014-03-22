@@ -27,9 +27,9 @@ describe('route /v0/neighborhoods.js', function() {
   });
 
   it('registers a GET callback', function() {
-    server = { get: sinon.spy() };
+    server = { get: sinon.spy(), use: sinon.spy() };
     var route = routeBuilder(server);
-    server.get.should.have.been.calledWith( '/v0/neighborhoods');
+    server.get.should.have.been.called;
     cb = server.get.args[0][1];
   });
 

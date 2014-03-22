@@ -26,7 +26,7 @@ describe('Route', function () {
     // make sure the server is started
     setTimeout(function() {
       request(url)
-          .get('/')
+          .get('/_not_a_url')
           .expect(404)
           .end(function (err, res) {
             if (err) {
