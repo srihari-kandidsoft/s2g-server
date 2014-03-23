@@ -14,7 +14,8 @@ module.exports = function(server) {
       summary: 'Page through the neighborhoods',
       notes: 'Pagination api needed!',
       nickname: 'getNeighborhoods'
-    }
+    },
+    validation: {}
   }, 
   neighborhoods.get);
 };

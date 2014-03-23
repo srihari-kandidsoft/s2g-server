@@ -5,12 +5,12 @@ var chai = require('chai')
   , should = chai.should
   ;
 
-describe('[unit] route /v0/neighborhoods.js', function() {
+describe('[unit] route /v0/neighborhoods', function() {
 
   var server;
 
   before( function() {
-    server = { get: sinon.spy() };
+    server = { get: sinon.spy(), use: sinon.spy() };
     require('../../../../app/v0/neighborhoods.js')(server);
   });
 
