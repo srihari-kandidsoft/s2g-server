@@ -1,8 +1,8 @@
 "use strict";
 
-var Account = require( '../../model/account.js')
-  , restify = require('restify')
+var restify = require('restify')
   , restifyValidation = require('node-restify-validation')
+  , accounts = require('../../controllers/accounts' )
   ;
 
 module.exports = function(server) {
@@ -20,27 +20,5 @@ module.exports = function(server) {
         password: { isRequired: true, scope: 'query', description: 'A new password for your account.'}
       }
     },
-    function(req, res, next) {
-      var account = new Account({ 
-        email: req.params.email, 
-        passwordHash: Account.hashPassword(req.params.password) 
-      });
-      var reply = null ;
-      console.log('in post route');
-      account.save( function(err) {
-        console.log('in save callback');
-        if (err) {
-          reply = { status: 'error', message: err};
-        }
-        else {
-          reply = {
-            status: 'success',
-            data: { email: account.email, id: account.id }
-          };
-        }
-        res.send(reply);
-        return next();
-      });
-    }
-  );
+    accounts.create);
 };

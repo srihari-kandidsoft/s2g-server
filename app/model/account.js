@@ -3,6 +3,7 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , crypto = require('crypto')
+  , validator = require('validator')
   ;
 
 /** Options: 
@@ -28,17 +29,31 @@ var options = {
 */
 
 var Account = new Schema({
-  email: { type: String, unique: true, index: true },
-  passwordHash: { type: String }
+  created: { type: Date, default: Date.now },
+  email: { type: String, required: true, unique: true, index: true, trim: true },
+  passwordHash: { type: String, required: true },
+  salt: String,
 } );
 
+Account.path('email').validate( validator.isEmail );
+
 Account.statics.hashPassword = function(password) {
-  var key = '616f6a1f92059a2c8ed1ba1b45e26335'
-    , hash = null;
+  var hash = null;
   if ( password ) {
-    hash = crypto.createHmac('sha1', key).update(password).digest('hex');
+    var p = password.trim()
+      , salt =crypto.randomBytes(20).toString('hex');
+    hash = crypto.createHmac('sha1', salt).update(p).digest('hex');
   }
   return hash;
 };
 
-module.exports = mongoose.model('Account', Account); 
+Account.virtual('password').set(function(password) {
+    this._password = password;
+    this.salt = crypto.randomBytes(20).toString('hex');
+    this.passwordHash = crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+  }).get(function() {
+    return this._password;
+  });
+
+
+mongoose.model('Account', Account); 

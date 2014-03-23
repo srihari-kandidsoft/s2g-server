@@ -62,9 +62,12 @@ function createServer (logger) {
   mongoose.connection.on('open;', function(err) {
     logger.info('Mongoose connection opened.');
   });
+
+  // LOAD MODELS
+  require( './model/account.js');
+  require( './model/neighborhood.js');
   
   // DEFINE ROUTES
-  
   require( './v0/version.js' )(server);
   require( './v0/neighborhoods.js' )(server);
   require( './v0/register_user.js' )(server);

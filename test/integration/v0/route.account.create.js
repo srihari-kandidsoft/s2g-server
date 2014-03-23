@@ -4,7 +4,10 @@ var chai = require('chai');
 var api_assertions = require('../../lib/apiJsonChai.js');
 var expect = chai.expect;
 var assert = chai.assert;
-var Account = require('../../../app/model/account.js');
+require('../../../app/model/account');
+var mongoose = require('mongoose');
+var Account = mongoose.model('Account');
+
 var logger = require('../../../app/logging.js');
 
 chai.use( api_assertions );

@@ -53,4 +53,4 @@ Neighborhood.virtual('composedName').get( function(){
   return util.format( '%s - %s, %s.', this.name, this.city, this.state.short );
 });
 */
-module.exports = mongoose.model('Neighborhood', Neighborhood);
+mongoose.model('Neighborhood', Neighborhood);

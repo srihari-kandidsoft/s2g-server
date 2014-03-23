@@ -1,0 +1,30 @@
+'use strict';
+var mongoose = require('mongoose')
+  , Account = mongoose.model('Account')
+  ;
+
+exports.create = function(req, res, next) {
+  var account = new Account({
+    email: req.params.email,
+    passwordHash: Account.hashPassword(req.params.password)
+  });
+  var reply = null;
+  account.save(function(err) {
+    if (err) {
+      reply = {
+        status: 'error',
+        message: err
+      };
+    } else {
+      reply = {
+        status: 'success',
+        data: {
+          email: account.email,
+          id: account.id
+        }
+      };
+    }
+    res.send(reply);
+    return next();
+  });
+};

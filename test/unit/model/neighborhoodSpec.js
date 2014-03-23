@@ -9,13 +9,14 @@ var mongooseMock = require('mongoose-mock'),
 
 chai.use(sinonChai);
 
-describe('Neighborhood', function() {
+describe('[unit] Model Neighborhood', function() {
   var Neighborhood;
 
   beforeEach(function() {
-    Neighborhood = proxyquire('../../../app/model/neighborhood.js',
-     { 'mongoose': mongooseMock });
-  });
+    proxyquire('../../../app/model/neighborhood.js',
+    { 'mongoose': mongooseMock });
+    Neighborhood = mongooseMock.model('Neighborhood');
+  }); 
 
   describe('.createAndSave', function() {
     it('saves the neighborhood', function() {

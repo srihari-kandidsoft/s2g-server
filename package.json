@@ -50,7 +50,7 @@
     "istanbul": "^0.2.6",
     "chai-things": "^0.2.0",
     "sinon-chai": "^2.5.0",
-    "mongoose-mock": "^0.1.3",
+    "mongoose-mock": "git://github.com/sebmartel/mongoose-mock.git",
     "proxyquire": "^0.5.3",
     "grunt-env": "^0.4.1"
   },

@@ -14,7 +14,7 @@ var util = require('util')
   , request = require('supertest') 
   , url = 'http://localhost:' + ( process.env.PORT || settings.server.port);
 
-describe('Route', function () {
+describe('[integration] Route', function () {
   var app;
 
   before(function (done) {
