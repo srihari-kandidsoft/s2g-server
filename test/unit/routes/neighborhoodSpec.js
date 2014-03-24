@@ -11,7 +11,7 @@ describe('[unit] /routes/neighborhoods Route', function() {
 
   before( function() {
     server = { get: sinon.spy(), use: sinon.spy() };
-    require('../../../../app/routes/neighborhoods.js')(server);
+    require('../../../app/routes/neighborhoods.js')(server);
   });
 
   var routeConfig
@@ -24,7 +24,7 @@ describe('[unit] /routes/neighborhoods Route', function() {
   });
 
   it('should invoke the controller: neighborhoods.get', function() {
-    routeHandler.should.equal( require('../../../../app/controllers/neighborhoods').get );
+    routeHandler.should.equal( require('../../../app/controllers/neighborhoods').get );
   });  
 
   describe('configuration', function() {
