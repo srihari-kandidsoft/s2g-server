@@ -17,7 +17,7 @@ describe('[unit] Account Controller', function() {
 
     it('should create a document and save it', function() {
       var documents = [];
-      proxyquire('../../../app/model/account', {'mongoose': mmock });
+      proxyquire('../../../app/models/account', {'mongoose': mmock });
       var AccountController = proxyquire('../../../app/controllers/accounts', 
         {'mongoose': mmock });
       mmock.on('document', documents.push.bind(documents));      
@@ -34,7 +34,7 @@ describe('[unit] Account Controller', function() {
     });
 
     it('it should set a response and call next when document is saved', function() {
-      proxyquire('../../../app/model/account', {'mongoose': mmock });
+      proxyquire('../../../app/models/account', {'mongoose': mmock });
       var Account = mmock.model('Account');
       var AccountController = proxyquire('../../../app/controllers/accounts', 
         {'mongoose': mmock });
@@ -60,7 +60,7 @@ describe('[unit] Account Controller', function() {
 
 
     it('it should set an error when the save fails.', function() {
-      proxyquire('../../../app/model/account', {'mongoose': mmock });
+      proxyquire('../../../app/models/account', {'mongoose': mmock });
       var Account = mmock.model('Account');
       var AccountController = proxyquire('../../../app/controllers/accounts', 
         {'mongoose': mmock });
@@ -106,7 +106,7 @@ describe('[unit] Account Controller', function() {
   //   before(function() {
   //     // Inject mongoose-mock in model and controller and register 
   //     // event handlers.
-  //     proxyquire('../../../app/model/account', {
+  //     proxyquire('../../../app/models/account', {
   //       'mongoose': mmock
   //     });
   //     AccountController = proxyquire('../../../app/controllers/accounts', {
@@ -135,7 +135,7 @@ describe('[unit] Account Controller', function() {
   //     documents = [];
   //     mmock.removeListener('model', saveModel);
   //     mmock.removeListener('document', saveDocument);
-  //     delete require.cache[require.resolve('../../../app/model/account')];
+  //     delete require.cache[require.resolve('../../../app/models/account')];
   //     delete require.cache[require.resolve('../../../app/controllers/accounts')];
   //   });
 

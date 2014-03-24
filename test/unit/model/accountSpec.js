@@ -1,6 +1,6 @@
 'use strict';
 
-require('../../../app/model/account');
+require('../../../app/models/account');
 
 var mongoose = require('mongoose')
   , Account = mongoose.model('Account')

@@ -13,7 +13,7 @@ describe('[unit] Neighborhood Model', function() {
   var Neighborhood;
 
   beforeEach(function() {
-    proxyquire('../../../app/model/neighborhood.js',
+    proxyquire('../../../app/models/neighborhood.js',
     { 'mongoose': mongooseMock });
     Neighborhood = mongooseMock.model('Neighborhood');
   }); 

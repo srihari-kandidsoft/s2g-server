@@ -64,8 +64,8 @@ function createServer (logger) {
   });
 
   // LOAD MODELS
-  require( './model/account.js');
-  require( './model/neighborhood.js');
+  require( './models/account.js');
+  require( './models/neighborhood.js');
   
   // DEFINE ROUTES
   require( './v0/version.js' )(server);

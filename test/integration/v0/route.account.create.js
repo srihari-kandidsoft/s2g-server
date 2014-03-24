@@ -4,7 +4,7 @@ var chai = require('chai');
 var api_assertions = require('../../lib/apiJsonChai.js');
 var expect = chai.expect;
 var assert = chai.assert;
-require('../../../app/model/account');
+require('../../../app/models/account');
 var mongoose = require('mongoose');
 var Account = mongoose.model('Account');
 

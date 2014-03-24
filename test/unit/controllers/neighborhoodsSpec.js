@@ -25,7 +25,7 @@ describe('[unit] Neighborhood Controller', function() {
         model.find.returns( { exec: func } );
         models.push( model );
       });
-      proxyquire('../../../app/model/neighborhood', {mongoose: mmock});
+      proxyquire('../../../app/models/neighborhood', {mongoose: mmock});
       var controller = proxyquire('../../../app/controllers/neighborhoods', {mongoose: mmock});
 
       res = {send: sinon.spy(), status: sinon.spy() };
@@ -73,7 +73,7 @@ describe('[unit] Neighborhood Controller', function() {
         model.find.returns( { exec: func } );
         models.push( model );
       });
-      proxyquire('../../../app/model/neighborhood', {mongoose: mmock});
+      proxyquire('../../../app/models/neighborhood', {mongoose: mmock});
       var controller = proxyquire('../../../app/controllers/neighborhoods', {mongoose: mmock});
 
       res = {send: sinon.spy(), status: sinon.spy() };
