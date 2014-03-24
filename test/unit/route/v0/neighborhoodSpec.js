@@ -1,88 +1,42 @@
 "use strict";
 
-// Sample unit test for extensive testing of the route object.
-// Mostly useless, but demonstrate how to proxy modules,
-// use stubs and spy to the right conditions to trigger 
-// error behaviors.
-
-var mongooseMock = require('mongoose-mock')
-  , proxyquire = require('proxyquire')
-  , chai = require('chai')
+var chai = require('chai')
   , sinon = require('sinon')
-  , sinonChai = require('sinon-chai')
-  , expect = chai.expect
-  , neighborhoodStub = { find: function(){} }
+  , should = chai.should
   ;
 
-describe('route /v0/neighborhoods.js', function() {
-  var routeBuilder;
+describe('[unit] /v0/neighborhoods Route', function() {
+
   var server;
-  var cb;
-  var foo = 'hi';
 
-  before(function() {
-    routeBuilder = proxyquire('../../../../app/v0/neighborhoods.js', {
-      '../model/neighborhood.js': neighborhoodStub
-    });
+  before( function() {
+    server = { get: sinon.spy(), use: sinon.spy() };
+    require('../../../../app/v0/neighborhoods.js')(server);
   });
 
-  it('registers a GET callback', function() {
-    server = { get: sinon.spy() };
-    var route = routeBuilder(server);
-    server.get.should.have.been.calledWith( '/v0/neighborhoods');
-    cb = server.get.args[0][1];
+  var routeConfig
+    , routeHandler;
+
+  it('assigns a handler to GET', function() {
+    server.get.should.have.been.called;
+    routeConfig = server.get.args[0][0];
+    routeHandler = server.get.args[0][1];
   });
 
-  describe('gets data', function() {
+  it('should invoke the controller: neighborhoods.get', function() {
+    routeHandler.should.equal( require('../../../../app/controllers/neighborhoods').get );
+  });  
 
-    var data_cb;
-    var stub = sinon.stub(neighborhoodStub, 'find', function() {
-        return {
-          exec: function( dcb ) {
-            data_cb = dcb;
-          }
-        };
-      });
-
-    var req = {}
-      , res = { send: sinon.spy() }
-      , next = sinon.spy();
-
-    before( function() {
-      cb(req,res,next);
-    });
+  describe('configuration', function() {
     
-    it('invokes the model with a data callback', function() {
-      stub.should.have.been.called;
-      data_cb.should.exist;
+    it('should route to /v0/neighborhoods', function() {
+      routeConfig.url.should.be.equal('/v0/neighborhoods');
     });
 
-    describe('and builds a successful response', function() {
-      it('by creating a json object', function() {
-        data_cb( null, "payload");
-        res.send.should.have.been.called;
-        res.send.args[0][0].should.deep.equal( { status: "success", data: "payload"});
-      });
-
-      it('then calls next()', function() {
-        next.should.have.been.called;
-      });
+    it('should have a swagger configuration', function() {
+      routeConfig.swagger.should.exist;
     });
-
-    describe('and builds an error response', function() {
-      it('by creating a json object', function() {
-        data_cb( "data error", "payload");
-        res.send.should.have.been.called;
-        res.send.args[1][0].should.deep.equal( { status: "error", data: "payload", message: "data error"});
-      });
-
-      it('then calls next()', function() {
-        next.should.have.been.called;
-      });
-    });
-
   });
-
-
 
 });
+

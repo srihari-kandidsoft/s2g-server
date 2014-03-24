@@ -4,7 +4,10 @@ var chai = require('chai');
 var api_assertions = require('../../lib/apiJsonChai.js');
 var expect = chai.expect;
 var assert = chai.assert;
-var Account = require('../../../app/model/account.js');
+require('../../../app/models/account');
+var mongoose = require('mongoose');
+var Account = mongoose.model('Account');
+
 var logger = require('../../../app/logging.js');
 
 chai.use( api_assertions );
@@ -15,6 +18,7 @@ module.exports = function(request,url) {
       request(url)
       .post('/v0/accounts')
       .query( {email: Math.random() + '@share2give.lan'} )
+      .query( {password: 'a wonderful day'})
       .set('Accept', 'application/json')
       .expect('Content-Type', 'application/json')
       .expect(200)
@@ -24,6 +28,46 @@ module.exports = function(request,url) {
         res.body.should.have.property('data').that.is.an.accountDetailJSON;
         return done();      
       });
+    });
+
+    it('400 with email only', function(done) {
+      request(url)
+        .post('/v0/accounts')
+        .query( {email: Math.random() + '@share2give.lan'} )
+        .set('Accept', 'application/json')
+        .expect('Content-Type', 'application/json')
+        .expect(400)
+        .end(done);
+    });
+
+    it('400 with invalid email string', function(done) {
+      request(url)
+        .post('/v0/accounts')
+        .query( {email: Math.random() + 'share2give-lan'} )
+        .query( {password: 'a wonderful day'})
+        .set('Accept', 'application/json')
+        .expect('Content-Type', 'application/json')
+        .expect(400)
+        .end(done);
+    });
+
+    it('400 with password only', function(done) {
+      request(url)
+        .post('/v0/accounts')
+        .query( {password: 'a wonderful day'})
+        .set('Accept', 'application/json')
+        .expect('Content-Type', 'application/json')
+        .expect(400)
+        .end(done);
+    });
+
+    it('400 with no arguments', function(done) {
+      request(url)
+        .post('/v0/accounts')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', 'application/json')
+        .expect(400)
+        .end(done); 
     });
     
     after( function() {

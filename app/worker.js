@@ -7,6 +7,8 @@ var path = require('path')
   , mongoose = require('mongoose')
   , settings = require('./settings').get()
   , restify = require('restify')
+  , restifySwagger = require('node-restify-swagger')
+  , restifyValidation = require('node-restify-validation')
   ;
 
 exports.createServer = createServer;
@@ -27,6 +29,23 @@ function createServer (logger) {
 
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
+  // server.use(restify.bodyParser());
+  // server.use(restifyValidation.validationPlugin({errorsAsArray: false}));
+
+  restifySwagger.configure(server, {
+    info: {
+      contact: 'seb@share2give.com',
+      description: 'This page allows you to learn about the API and issue sample requests.',
+      license: 'Copyright 2014 - Share2Give, all rights reserved.',
+      // licenseUrl: 'http://opensource.org/licenses/MIT',
+      // termsOfServiceUrl: 'http://opensource.org/licenses/MIT',
+      title: 'Welcome to the developer API console.'
+    },
+    apiDescriptions: {
+      'get':'GET-Api Resource',
+      'post':'POST-Api Resource'
+    }
+  });
 
   server.on('NotFound', function (req, res, next) {
     if (logger) logger.debug('404', 'Request for ' + req.url + ' not found. No route.');
@@ -43,20 +62,35 @@ function createServer (logger) {
   mongoose.connection.on('open;', function(err) {
     logger.info('Mongoose connection opened.');
   });
+
+  // LOAD MODELS
+  require( './models/account.js');
+  require( './models/neighborhood.js');
   
   // DEFINE ROUTES
-  
   require( './v0/version.js' )(server);
   require( './v0/neighborhoods.js' )(server);
   require( './v0/register_user.js' )(server);
-  require( './v0/accounts/post.js' )(server);
+  require( './v0/accounts.js' )(server);
   
+  restifySwagger.loadRestifyRoutes();
+
   // sample route
   // USAGE EXAMPLE: /test
   server.get('/test', function (req, res, next) {
     res.send({'result': 'test'});      
     return next();
   });
+
+  /**
+   * Serve static swagger resources
+   **/
+  server.get(/^\/docs\/?.*/, restify.serveStatic({directory: './swagger-ui'}));
+  server.get('/', function (req, res, next) {
+      res.header('Location', '/docs/index.html');
+      res.send(302);
+      return next(false);
+    }); 
   
   return server;
 }

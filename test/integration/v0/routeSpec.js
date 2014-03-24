@@ -14,7 +14,7 @@ var util = require('util')
   , request = require('supertest') 
   , url = 'http://localhost:' + ( process.env.PORT || settings.server.port);
 
-describe('Route', function () {
+describe('[integration] Route', function () {
   var app;
 
   before(function (done) {
@@ -26,7 +26,7 @@ describe('Route', function () {
     // make sure the server is started
     setTimeout(function() {
       request(url)
-          .get('/')
+          .get('/_not_a_url')
           .expect(404)
           .end(function (err, res) {
             if (err) {

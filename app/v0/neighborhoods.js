@@ -1,20 +1,21 @@
 "use strict";
 
-var Neighborhood = require( '../model/neighborhood.js');
+var restify = require('restify')
+  , restifyValidation = require('node-restify-validation')
+  , neighborhoods = require('../controllers/neighborhoods')
+  ;
 
 module.exports = function(server) {
-  server.get('/v0/neighborhoods', function(req, res, next) {
-    Neighborhood.find().exec( function(err, d) {
-      var reply = { 
-        status: 'success',
-        data: d
-      };
-      if ( err ) {
-        reply.status = 'error';
-        reply.message = err;
-      }
-      res.send( reply );
-      next();      
-    });
-  });
+  // server.use(restify.bodyParser());
+  // server.use(restifyValidation.validationPlugin({errorsAsArray: false}));  
+  server.get({
+    url: '/v0/neighborhoods',
+    swagger: {
+      summary: 'Page through the neighborhoods',
+      notes: 'Pagination api needed!',
+      nickname: 'getNeighborhoods'
+    },
+    validation: {}
+  }, 
+  neighborhoods.get);
 };

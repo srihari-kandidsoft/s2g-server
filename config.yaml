@@ -34,7 +34,7 @@ development:
     db: 'mongodb://localhost'
   logs:
     stream:
-      level: warn
+      level: debug
 heroku:
   server:
     cluster: true
