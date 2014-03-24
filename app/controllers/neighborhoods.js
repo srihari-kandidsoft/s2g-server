@@ -10,6 +10,7 @@ exports.get = function(req, res, next) {
       data: d
     };
     if (err) {
+      res.status(400);
       reply.status = 'error';
       reply.message = err;
     }

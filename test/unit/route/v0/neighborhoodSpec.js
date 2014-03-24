@@ -5,7 +5,7 @@ var chai = require('chai')
   , should = chai.should
   ;
 
-describe('[unit] route /v0/neighborhoods', function() {
+describe('[unit] /v0/neighborhoods Route', function() {
 
   var server;
 

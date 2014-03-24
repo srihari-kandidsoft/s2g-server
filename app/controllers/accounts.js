@@ -15,6 +15,7 @@ exports.create = function(req, res, next) {
         status: 'error',
         message: err
       };
+      res.status(500);
     } else {
       reply = {
         status: 'success',
