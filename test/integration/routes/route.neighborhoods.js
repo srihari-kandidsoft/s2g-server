@@ -8,10 +8,10 @@ var api_assertions = require('../../lib/apiJsonChai.js');
 chai.use( api_assertions );
 
 module.exports = function(request,url) {
-  describe( 'GET /routes/neighborhoods', function() {
+  describe( 'GET /neighborhoods', function() {
     it('should return the route response', function (done) {
       request(url)
-            .get('/routes/neighborhoods')
+            .get('/neighborhoods')
             .set('Accept', 'application/json')
             .expect('Content-Type', 'application/json')
             .expect(200)

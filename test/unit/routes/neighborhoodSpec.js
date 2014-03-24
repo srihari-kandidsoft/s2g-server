@@ -5,7 +5,7 @@ var chai = require('chai')
   , should = chai.should
   ;
 
-describe('[unit] /routes/neighborhoods Route', function() {
+describe('[unit] /neighborhoods Route', function() {
 
   var server;
 
@@ -29,8 +29,8 @@ describe('[unit] /routes/neighborhoods Route', function() {
 
   describe('configuration', function() {
     
-    it('should route to /routes/neighborhoods', function() {
-      routeConfig.url.should.be.equal('/routes/neighborhoods');
+    it('should route to /neighborhoods', function() {
+      routeConfig.url.should.be.equal('/neighborhoods');
     });
 
     it('should have a swagger configuration', function() {
