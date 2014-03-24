@@ -71,7 +71,7 @@ function createServer (logger) {
   require( './v0/version.js' )(server);
   require( './v0/neighborhoods.js' )(server);
   require( './v0/register_user.js' )(server);
-  require( './v0/accounts/post.js' )(server);
+  require( './v0/accounts.js' )(server);
   
   restifySwagger.loadRestifyRoutes();
 

@@ -2,7 +2,7 @@
 
 var restify = require('restify')
   , restifyValidation = require('node-restify-validation')
-  , accounts = require('../../controllers/accounts' )
+  , accounts = require('../controllers/accounts' )
   ;
 
 module.exports = function(server) {
