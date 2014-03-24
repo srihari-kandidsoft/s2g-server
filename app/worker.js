@@ -9,6 +9,8 @@ var path = require('path')
   , restify = require('restify')
   , restifySwagger = require('node-restify-swagger')
   , restifyValidation = require('node-restify-validation')
+  , restifyOAuth2 = require('restify-oauth2')
+  , hooks = require('./oauth2Hooks')
   ;
 
 exports.createServer = createServer;
@@ -29,8 +31,10 @@ function createServer (logger) {
 
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
-  // server.use(restify.bodyParser());
-  // server.use(restifyValidation.validationPlugin({errorsAsArray: false}));
+  server.use(restify.bodyParser({ mapParams: false }));
+  server.use(restify.authorizationParser());
+  console.log(hooks);
+  restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: hooks }); 
 
   restifySwagger.configure(server, {
     info: {
@@ -52,7 +56,9 @@ function createServer (logger) {
     res.send(404, req.url + ' was not found');
   });
   
-  if (logger) server.on('after', restify.auditLogger({ log: logger }));
+  if (logger) {
+    server.on('after', restify.auditLogger({ log: logger }));
+  }
 
   // INIT MONGO
   mongoose.connect(settings.mongo.db);

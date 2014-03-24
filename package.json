@@ -33,7 +33,9 @@
     "mysql": "^2.1.1",
     "node-restify-validation": "0.0.6",
     "node-restify-swagger": "^0.1.6",
-    "validator": "^3.5.0"
+    "validator": "^3.5.0",
+    "restify-oauth2": "git://github.com/sebmartel/restify-oauth2",
+    "underscore": "^1.6.0"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
