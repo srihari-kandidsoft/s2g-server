@@ -13,10 +13,10 @@ var logger = require('../../../app/logging.js');
 chai.use( api_assertions );
 
 module.exports = function(request,url) {
-  describe( 'POST /v0/accounts', function() {
+  describe( 'POST /routes/accounts', function() {
     it('should return the route response', function (done) {
       request(url)
-      .post('/v0/accounts')
+      .post('/routes/accounts')
       .query( {email: Math.random() + '@share2give.lan'} )
       .query( {password: 'a wonderful day'})
       .set('Accept', 'application/json')
@@ -32,7 +32,7 @@ module.exports = function(request,url) {
 
     it('400 with email only', function(done) {
       request(url)
-        .post('/v0/accounts')
+        .post('/routes/accounts')
         .query( {email: Math.random() + '@share2give.lan'} )
         .set('Accept', 'application/json')
         .expect('Content-Type', 'application/json')
@@ -42,7 +42,7 @@ module.exports = function(request,url) {
 
     it('400 with invalid email string', function(done) {
       request(url)
-        .post('/v0/accounts')
+        .post('/routes/accounts')
         .query( {email: Math.random() + 'share2give-lan'} )
         .query( {password: 'a wonderful day'})
         .set('Accept', 'application/json')
@@ -53,7 +53,7 @@ module.exports = function(request,url) {
 
     it('400 with password only', function(done) {
       request(url)
-        .post('/v0/accounts')
+        .post('/routes/accounts')
         .query( {password: 'a wonderful day'})
         .set('Accept', 'application/json')
         .expect('Content-Type', 'application/json')
@@ -63,7 +63,7 @@ module.exports = function(request,url) {
 
     it('400 with no arguments', function(done) {
       request(url)
-        .post('/v0/accounts')
+        .post('/routes/accounts')
         .set('Accept', 'application/json')
         .expect('Content-Type', 'application/json')
         .expect(400)

@@ -9,7 +9,7 @@ module.exports = function(server) {
   // server.use(restify.bodyParser());
   // server.use(restifyValidation.validationPlugin({errorsAsArray: false}));  
   server.get({
-    url: '/v0/neighborhoods',
+    url: '/routes/neighborhoods',
     swagger: {
       summary: 'Page through the neighborhoods',
       notes: 'Pagination api needed!',

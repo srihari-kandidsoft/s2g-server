@@ -74,10 +74,10 @@ function createServer (logger) {
   require( './models/neighborhood.js');
   
   // DEFINE ROUTES
-  require( './v0/version.js' )(server);
-  require( './v0/neighborhoods.js' )(server);
-  require( './v0/register_user.js' )(server);
-  require( './v0/accounts.js' )(server);
+  require( './routes/version.js' )(server);
+  require( './routes/neighborhoods.js' )(server);
+  require( './routes/register_user.js' )(server);
+  require( './routes/accounts.js' )(server);
   
   restifySwagger.loadRestifyRoutes();
 

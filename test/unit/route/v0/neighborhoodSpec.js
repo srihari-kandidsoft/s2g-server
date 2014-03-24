@@ -5,13 +5,13 @@ var chai = require('chai')
   , should = chai.should
   ;
 
-describe('[unit] /v0/neighborhoods Route', function() {
+describe('[unit] /routes/neighborhoods Route', function() {
 
   var server;
 
   before( function() {
     server = { get: sinon.spy(), use: sinon.spy() };
-    require('../../../../app/v0/neighborhoods.js')(server);
+    require('../../../../app/routes/neighborhoods.js')(server);
   });
 
   var routeConfig
@@ -29,8 +29,8 @@ describe('[unit] /v0/neighborhoods Route', function() {
 
   describe('configuration', function() {
     
-    it('should route to /v0/neighborhoods', function() {
-      routeConfig.url.should.be.equal('/v0/neighborhoods');
+    it('should route to /routes/neighborhoods', function() {
+      routeConfig.url.should.be.equal('/routes/neighborhoods');
     });
 
     it('should have a swagger configuration', function() {
