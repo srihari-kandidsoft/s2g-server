@@ -9,14 +9,14 @@ module.exports = function(params) {
     , settings = require('./settings').config
     , cluster = require('cluster')
     , worker = require('./worker')
-    , logging = require('./logging')
+    , logger = require('./logging').logger
     ;
 
   var singleServer;
-  function spawnWorker (logger) {
+  function spawnWorker () {
 
     // create servers
-    var server = worker.createServer(logger);
+    var server = worker.createServer();
     singleServer = server;
 
     server.on('error', function(err) {
@@ -32,7 +32,7 @@ module.exports = function(params) {
     });
   }
 
-  function createCluster (logger) {
+  function createCluster () {
     
     // Set up cluster and start servers
     if (cluster.isMaster) {
@@ -61,23 +61,18 @@ module.exports = function(params) {
     } 
     // Worker processes
     else {
-      spawnWorker(logger);
+      spawnWorker();
     }
   }
 
   function doRun (cluster) {
-
-    // Set up logging
-    var logger = logging.createLogger(settings.logs, NODE_ENV);
-
     // In production environment, create a cluster
     if (NODE_ENV === 'production' || Boolean(settings.server.cluster) || cluster ) {
-      createCluster(logger);
+      createCluster();
     }
     else {
-      spawnWorker(logger);
+      spawnWorker();
     }
-
   }
 
   return {

@@ -28,7 +28,7 @@ describe('[unit] settings', function () {
   });
 
   it('should detect the environment if supplied as an option: --env', function () {
-    process.argv.splice(2, 2, '--env', 'foobar');
+    process.argv.splice(2, 0, '--env', 'foobar');
     settings = require('../../app/settings');
     settings.environment.should.equal('foobar');
   });
@@ -45,6 +45,13 @@ describe('[unit] settings', function () {
     delete process.env.NODE_ENV;
     settings = require('../../app/settings');
     settings.environment.should.equal('default');
+  });
+
+  it('should use the first value of --env if more than one is supplied', function() {
+    process.argv.splice(2, 0, '--env', 'celeste');
+    process.argv.splice(2, 0, '--env', 'alexandre');
+    settings = require('../../app/settings');
+    settings.environment.should.equal('alexandre');
   });
 
 });

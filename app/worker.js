@@ -11,6 +11,7 @@ var path = require('path')
   , restifyValidation = require('node-restify-validation')
   , restifyOAuth2 = require('restify-oauth2')
   , hooks = require('./oauth2Hooks')
+  , logger = require('./logging').logger
   ;
 
 exports.createServer = createServer;
@@ -19,13 +20,12 @@ exports.createServer = createServer;
  * Set up server
  * @return the created server
  */
-function createServer (logger) {
+function createServer () {
 
   var config = {
-    name: require('../package').name
+    name: require('../package').name,
+    log: logger
   };
-
-  if (logger) config.log = logger;
 
   var server = restify.createServer(config);
 
