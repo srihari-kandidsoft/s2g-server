@@ -11,6 +11,7 @@ describe('[unit] /neighborhoods Route', function() {
 
   before( function() {
     server = { get: sinon.spy(), use: sinon.spy() };
+    require('../../../app/models/neighborhood.js');
     require('../../../app/routes/neighborhoods.js')(server);
   });
 

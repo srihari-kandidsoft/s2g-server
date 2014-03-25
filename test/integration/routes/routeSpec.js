@@ -22,11 +22,8 @@ describe('[integration] Route', function () {
     // use 'test' if there was no environement sepecified.
     process.env.NODE_ENV = 'test';
   }
-
   var settings = require('../../../app/settings').config;
-
   url = 'http://localhost:' + (process.env.PORT || settings.server.port);
-  console.log('is this shit running? : %s', url);
 
   before(function (done) {
 
