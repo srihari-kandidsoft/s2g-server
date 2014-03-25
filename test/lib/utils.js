@@ -13,11 +13,11 @@ exports.createInProcessApplication = function (url, done) {
   var app = server();
   app.run();
 
-  // make sure the server is started
+  // give the server 500ms to startup
   exports.wakeUp(url, done, 500);
 
   return app;
-}
+};
 
 exports.wakeUp = function (url, done, timeout) {
   setTimeout(function() {
@@ -36,4 +36,4 @@ exports.wakeUp = function (url, done, timeout) {
         return done();
       });
   }, timeout);
-}
+};

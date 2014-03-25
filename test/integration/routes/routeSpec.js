@@ -204,6 +204,10 @@ describe('INTEGRATION Route', function () {
     });
   });
 
-
+  describe('POST /token', function () {
+    it('requires a client_id, grant_type, username and password', function () {
+            
+    });
+  });
 });
 
