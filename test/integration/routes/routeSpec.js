@@ -9,13 +9,23 @@ var util = require('util')
   , path = require('path')
   , fs = require('fs')
   , should = require('chai').should()
-  , settings = require('../../../app/settings').set(process.env.NODE_ENV || 'test').get()
   , expect = require('chai').expect
   , request = require('supertest') 
-  , url = 'http://localhost:' + ( process.env.PORT || settings.server.port);
+  ;
 
 describe('[integration] Route', function () {
-  var app;
+  var app, oldNODE_ENV, url;
+  
+  // Save off current NODE_ENV
+  oldNODE_ENV = process.env.NODE_ENV;
+  if (!process.env.NODE_ENV) {
+    // use 'test' if there was no environement sepecified.
+    process.env.NODE_ENV = 'test';
+  }
+
+  var settings = require('../../../app/settings').settings;
+
+  url = 'http://localhost:' + process.env.PORT || settings.server.port;
 
   before(function (done) {
 
@@ -44,6 +54,13 @@ describe('[integration] Route', function () {
   require('./route.neighborhoods.js')(request,url);
 
   after(function(done) {
+    // restore the NODE_ENV
+    if (oldNODE_ENV) {
+      process.env.NODE_ENV = oldNODE_ENV;
+    } else {
+      delete process.env.NODE_ENV;
+    }
+
     app.close(function() {
       done();
     });

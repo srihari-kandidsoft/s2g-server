@@ -5,7 +5,7 @@
 var path = require('path')
   , restify = require('restify')
   , mongoose = require('mongoose')
-  , settings = require('./settings').get()
+  , settings = require('./settings').config
   , restify = require('restify')
   , restifySwagger = require('node-restify-swagger')
   , restifyValidation = require('node-restify-validation')

@@ -12,6 +12,7 @@
 module.exports = function(request, url) {
   describe( 'GET /test', function() {
     it('should return the static test response', function (done) {
+      console.log('url: ' + url);
       request(url)
             .get('/test')
             .set('Accept', 'application/json')

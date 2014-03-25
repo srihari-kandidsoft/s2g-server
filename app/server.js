@@ -1,5 +1,3 @@
-/*global module:true, require:true, console:true, process:true */
-
 'use strict';
 
 module.exports = function(params) {
@@ -8,7 +6,7 @@ module.exports = function(params) {
   var NODE_ENV = params.env || 'default';
 
   var path = require('path')
-    , settings = require('./settings').set(NODE_ENV)
+    , settings = require('./settings').config
     , cluster = require('cluster')
     , worker = require('./worker')
     , logging = require('./logging')
@@ -27,7 +25,7 @@ module.exports = function(params) {
     });
 
     // start listening
-    var port = params.port || process.env.PORT || settings.get().server.port || 8000;
+    var port = params.port || process.env.PORT || settings.server.port || 8000;
 
     server.listen(port, function () {
       logger.info('%s listening at %s', server.name, server.url);
@@ -70,10 +68,10 @@ module.exports = function(params) {
   function doRun (cluster) {
 
     // Set up logging
-    var logger = logging.createLogger(settings.get().logs, NODE_ENV);
+    var logger = logging.createLogger(settings.logs, NODE_ENV);
 
     // In production environment, create a cluster
-    if (NODE_ENV === 'production' || Boolean(settings.get().server.cluster) || cluster ) {
+    if (NODE_ENV === 'production' || Boolean(settings.server.cluster) || cluster ) {
       createCluster(logger);
     }
     else {

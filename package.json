@@ -35,7 +35,8 @@
     "node-restify-swagger": "^0.1.6",
     "validator": "^3.5.0",
     "restify-oauth2": "git://github.com/sebmartel/restify-oauth2",
-    "underscore": "^1.6.0"
+    "underscore": "^1.6.0",
+    "minimist": "0.0.8"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
