@@ -15,7 +15,7 @@ var util = require('util')
 
 describe('[integration] Route', function () {
   var app, oldNODE_ENV, url;
-  
+
   // Save off current NODE_ENV
   oldNODE_ENV = process.env.NODE_ENV;
   if (!process.env.NODE_ENV) {
@@ -23,14 +23,16 @@ describe('[integration] Route', function () {
     process.env.NODE_ENV = 'test';
   }
 
-  var settings = require('../../../app/settings').settings;
+  var settings = require('../../../app/settings').config;
 
-  url = 'http://localhost:' + process.env.PORT || settings.server.port;
+  url = 'http://localhost:' + (process.env.PORT || settings.server.port);
+  console.log('is this shit running? : %s', url);
 
   before(function (done) {
 
     var server = require('../../../app/server');
-    app = server( {'env': process.env.NODE_ENV || 'test' } );
+    //{'env': process.env.NODE_ENV || 'test' };
+    app = server();
     app.run();
 
     // make sure the server is started

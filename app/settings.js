@@ -11,12 +11,13 @@ exports.heroku = config.readConfig(path.join(__dirname, '../config.yaml'), 'hero
 exports.default = config.readConfig(path.join(__dirname, '../config.yaml'), 'default');
 exports.development = config.readConfig(path.join(__dirname, '../config.yaml'), 'development');
 
+
+exports.args = minimist(process.argv.slice(2));
 function getEnvironment () {
-  var argv = minimist(process.argv.slice(2));
-  var argEnv = argv.env;
-  if ( Object.prototype.toString.call(argv.env) === '[object Array]') {
+  var argEnv = exports.args.env;
+  if ( Object.prototype.toString.call(exports.args.env) === '[object Array]') {
     // if more than one environment specified, use the first one.
-    argEnv = argv.env[0];
+    argEnv = exports.args.env[0];
   }
   return argEnv || process.env.NODE_ENV || 'default';
 }

@@ -1,7 +1,7 @@
 'use strict';
 
 var chai = require('chai')
-  , should = chai.should
+  , should = chai.should()
   ;
 
 
@@ -24,6 +24,7 @@ describe('[unit] settings', function () {
 
   it('should expose a config object', function () {
     settings = require('../../app/settings');
+    console.log(settings);
     settings.should.have.a.property('config'); 
   });
 
