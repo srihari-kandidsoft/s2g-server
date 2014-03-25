@@ -13,7 +13,7 @@ chai.use(sinonChai);
 
 describe('UNIT Neighborhood Controller', function() {
 
-  describe( '.get is Successful', function() {
+  describe( '#get is Successful', function() {
 
     var models = [];
     var req, res, next;
@@ -62,7 +62,7 @@ describe('UNIT Neighborhood Controller', function() {
     });
   });
 
-  describe('.get encounters an error', function() {
+  describe('#get encounters an error', function() {
     var models = [];
     var req, res, next;
 

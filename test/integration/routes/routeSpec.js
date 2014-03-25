@@ -74,7 +74,7 @@ describe('INTEGRATION Route', function () {
     }
   });
 
-  describe( 'GET /test', function() {
+  describe( 'GET #/test', function() {
     it('should return the static test response', function (done) {
       request(url)
             .get('/test')
@@ -91,7 +91,7 @@ describe('INTEGRATION Route', function () {
     });
   });
 
-  describe( 'GET /version', function() {
+  describe( 'GET #/version', function() {
 
     function getVersion() {
       return require('../../../package.json').version;
@@ -113,7 +113,7 @@ describe('INTEGRATION Route', function () {
     });
   });
 
-  describe( 'POST /accounts', function() {
+  describe( 'POST #/accounts', function() {
 
     require('../../../app/models/account');
     var mongoose = require('mongoose');
@@ -185,7 +185,7 @@ describe('INTEGRATION Route', function () {
     });
   });
 
-  describe( 'GET /neighborhoods', function() {
+  describe( 'GET #/neighborhoods', function() {
     it('should return the route response', function (done) {
       request(url)
             .get('/neighborhoods')
@@ -204,7 +204,7 @@ describe('INTEGRATION Route', function () {
     });
   });
 
-  describe('POST /token', function () {
+  describe('POST #/token', function () {
     it('requires basic_auth, grant_type, username and password', function (done) {
       request(url)
         .post('/token')

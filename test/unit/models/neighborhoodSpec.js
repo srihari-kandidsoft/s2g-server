@@ -18,7 +18,7 @@ describe('UNIT Neighborhood Model', function() {
     Neighborhood = mongooseMock.model('Neighborhood');
   }); 
 
-  describe('.createAndSave', function() {
+  describe('#createAndSave', function() {
     it('saves the neighborhood', function() {
       var cb = sinon.spy();
       var n = Neighborhood.createAndSave({

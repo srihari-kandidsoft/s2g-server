@@ -16,7 +16,7 @@ chai.use(sinonChai);
 
 describe('UNIT Account Model', function() {
 
-  describe('.hashPassword', function() {
+  describe('#hashPassword', function() {
     
     it('returns null if no password is supplied', function() {
       chai.expect( Account.hashPassword() ).to.be.null;
@@ -37,7 +37,7 @@ describe('UNIT Account Model', function() {
     });
   });
 
-  describe('.password', function() {
+  describe('#password', function() {
     it('sets and gets the same value', function() {
       var account = new Account();
       account.set('password', 'apsswrd');
@@ -53,7 +53,7 @@ describe('UNIT Account Model', function() {
     });
   });
 
-  describe('.getAccountByAccessToken', function () {
+  describe('#getAccountByAccessToken', function () {
     var Account;
 
     before(function () {

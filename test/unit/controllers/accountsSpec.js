@@ -13,7 +13,7 @@ chai.use(sinonChai);
 
 describe('UNIT Account Controller', function() {
 
-  describe( '.create', function() {
+  describe( '#create', function() {
 
     it('should create a document and save it', function() {
       var documents = [];
