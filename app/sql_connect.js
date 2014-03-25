@@ -1,7 +1,7 @@
 'use strict';
 
 var mysql = require('mysql');
-var config = require('yaml-config');
+var config = require('./config');
 var path = require('path');
 
 var settings = config.readConfig(path.join(__dirname, '../config.yaml'), 'default');
@@ -36,10 +36,10 @@ function get_connection(next) {
 
   var connection =
     mysql.createConnection({
-      host: settings.mysql.host,
-      user: settings.mysql.user,
-      password: settings.mysql.password,
-      database: settings.mysql.database
+      host: config.get(mysql.host),
+      user: config.get(mysql.user),
+      password: config.get(mysql.password),
+      database: config.get(mysql.database)
     });
 
   return next(connection);
