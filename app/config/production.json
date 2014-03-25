@@ -1,0 +1,8 @@
+{
+    "server": {
+        "cluster": "true"
+    },
+    "logs": {
+        "level": "info"
+    }
+}

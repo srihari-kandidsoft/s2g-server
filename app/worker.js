@@ -5,10 +5,13 @@
 var path = require('path')
   , restify = require('restify')
   , mongoose = require('mongoose')
-  , settings = require('./settings').get()
+  , conf = require('./config')
   , restify = require('restify')
   , restifySwagger = require('node-restify-swagger')
   , restifyValidation = require('node-restify-validation')
+  , restifyOAuth2 = require('restify-oauth2')
+  , hooks = require('./oauth2Hooks')
+  , logger = require('./logging').logger
   ;
 
 exports.createServer = createServer;
@@ -17,20 +20,20 @@ exports.createServer = createServer;
  * Set up server
  * @return the created server
  */
-function createServer (logger) {
+function createServer () {
 
   var config = {
-    name: require('../package').name
+    name: require('../package').name,
+    log: logger
   };
-
-  if (logger) config.log = logger;
 
   var server = restify.createServer(config);
 
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
-  // server.use(restify.bodyParser());
-  // server.use(restifyValidation.validationPlugin({errorsAsArray: false}));
+  server.use(restify.bodyParser({ mapParams: false }));
+  server.use(restify.authorizationParser());
+  restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: hooks }); 
 
   restifySwagger.configure(server, {
     info: {
@@ -52,10 +55,12 @@ function createServer (logger) {
     res.send(404, req.url + ' was not found');
   });
   
-  if (logger) server.on('after', restify.auditLogger({ log: logger }));
+  if (logger) {
+    server.on('after', restify.auditLogger({ log: logger }));
+  }
 
   // INIT MONGO
-  mongoose.connect(settings.mongo.db);
+  mongoose.connect(conf.get('mongo.db'));
   mongoose.connection.on('error', function(err) {
     logger.error('Mongoose connection error: %s', err);
   });
@@ -68,10 +73,10 @@ function createServer (logger) {
   require( './models/neighborhood.js');
   
   // DEFINE ROUTES
-  require( './v0/version.js' )(server);
-  require( './v0/neighborhoods.js' )(server);
-  require( './v0/register_user.js' )(server);
-  require( './v0/accounts.js' )(server);
+  require( './routes/version.js' )(server);
+  require( './routes/neighborhoods.js' )(server);
+  require( './routes/register_user.js' )(server);
+  require( './routes/accounts.js' )(server);
   
   restifySwagger.loadRestifyRoutes();
 

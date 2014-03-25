@@ -1,0 +1,10 @@
+{
+    "server": {
+        "port": "8123"
+    },
+    "logs": {
+        "streams": {
+            "level": "warn"
+        }
+    }
+}

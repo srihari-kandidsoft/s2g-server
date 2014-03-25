@@ -9,7 +9,7 @@ module.exports = function(server) {
   server.use(restify.bodyParser());
   server.use(restifyValidation.validationPlugin({errorsAsArray: false}));
   server.post({
-      url: '/v0/accounts',
+      url: '/accounts',
       swagger: {
         summary: 'Create an account',
         notes: 'A unique email is expected. Passwords are hashed before being stored.',

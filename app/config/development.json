@@ -1,0 +1,13 @@
+{
+    "server": {
+        "port": "8123"
+    },
+    "mongo": {
+        "db": "mongodb://localhost"
+    },
+    "logs": {
+        "stream": {
+            "level": "debug"
+        }
+    }
+}
