@@ -11,7 +11,7 @@ var mmock = require('mongoose-mock'),
 
 chai.use(sinonChai);
 
-describe('[unit] Neighborhood Controller', function() {
+describe('UNIT Neighborhood Controller', function() {
 
   describe( '.get is Successful', function() {
 

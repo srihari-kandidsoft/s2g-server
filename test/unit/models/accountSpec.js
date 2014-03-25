@@ -7,7 +7,7 @@ var mongoose = require('mongoose')
   , chai = require('chai')
   ;
 
-describe('[unit] Account Model', function() {
+describe('UNIT Account Model', function() {
 
   describe('.hashPassword', function() {
     

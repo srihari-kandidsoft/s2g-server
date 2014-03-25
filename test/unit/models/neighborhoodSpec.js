@@ -9,7 +9,7 @@ var mongooseMock = require('mongoose-mock'),
 
 chai.use(sinonChai);
 
-describe('[unit] Neighborhood Model', function() {
+describe('UNIT Neighborhood Model', function() {
   var Neighborhood;
 
   beforeEach(function() {

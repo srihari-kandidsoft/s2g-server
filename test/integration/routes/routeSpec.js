@@ -1,51 +1,77 @@
 'use strict';
+ /** 
+  *  All integration and acceptance can and should run with an 
+  *  in-process service exposing a localhost:port endpoint or an 
+  *  external endpoint supplied as configuration.
+  *
+  *  When no configuration is supplied for the test url, localhost is 
+  *  selected and the default or supplied port setting is used. The test 
+  *  suite will attempt to start an in-process server and run the suite 
+  *  against it. Use such a configuration when you are developing the 
+  *  application and want to do continuous testing and integration.
+  *
+  *  When a test url is configured, the test suite will run against 
+  *  that endpoint.  Use this configuration to do deployment validation
+  *  and acceptance testing.
+  */
 
-/* Main Spec file to run the route tests.
- * This one configures and starts a test server then
- * requires all the route.**.js files and runs them.
- */
 
-var util = require('util')
-  , path = require('path')
-  , fs = require('fs')
+var path = require('path')
   , chai = require('chai')
   , should = chai.should()
-  , expect = chai.expect
   , request = require('supertest') 
   , conf = require('../../../app/config')
-  , logger = require('../../../app/logging.js')
-  , api_assertions = require('../../lib/apiJsonChai.js')
+  , logger = require('../../../app/logging').logger
+  , api_assertions = require('../../lib/apiJsonChai')
+  , utils = require('../../lib/utils')
   ;
 
 chai.use( api_assertions );
 
-describe('[integration] Route', function () {
+/**
+ *   This suite will call each route and test
+ *   each API indenpendently of the others. 
+ *   Start with [integration] tests to ensure 
+ *   that APIs are responding the way they should
+ *   given no specific use-case.
+ *   
+ *   For more use-case validation requiring 
+ *   more than one API call, look at the 
+ *   [acceptance] tests.
+ *  
+ *   For regressions, look at [regression] 
+ *   tests.
+ */
+describe('INTEGRATION Route', function () {
 
   var url, app;
 
   before(function (done) {
-    url = 'http://localhost:' + conf.get( 'server.port' );
-    var server = require('../../../app/server');
-    app = server();
-    app.run();
-
-    // make sure the server is started
-    setTimeout(function() {
-      request(url)
-          .get('/_not_a_url')
-          .expect(404)
-          .end(function (err, res) {
-            if (err) {
-              if (err.code === 'ECONNREFUSED') return done(new Error('Server is not running.'));
-              return done(err);
-            }
-            return done();
-          });
-    }, 500);
+    // Set 'url' and start app if no testing endpoint provided.
+    if ( process.env.TEST_URL ) {
+      url = process.env.TEST_URL;
+      // let's increase the timeout of this setup
+      // to account for possible spin-up cost on the 
+      // hosting platform.
+      var timeout = 10000;
+      this.timeout(timeout);
+      // 0 timeout, we want to wake-it up now.
+      logger.info('Waking up end-point (%dms): %s', timeout, url);
+      utils.wakeUp(url, done, 0);
+    } else {
+      var port = conf.get('server.port');
+      url = 'http://localhost:' + port;
+      app = utils.createInProcessApplication(url, done);
+    }
   });
 
   after(function(done) {
-    app.close( done );
+    if (app) {
+      // Shutdown the app
+      app.close( done );
+    } else {
+      done();
+    }
   });
 
   describe( 'GET /test', function() {
