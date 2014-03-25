@@ -3,11 +3,10 @@
 module.exports = function() {
 
   var path = require('path')
-    , settings = require('./settings').config
-    , args = require('./settings').args
     , cluster = require('cluster')
     , worker = require('./worker')
     , logger = require('./logging').logger
+    , conf = require('./config')
     ;
 
   var singleServer;
@@ -23,7 +22,7 @@ module.exports = function() {
     });
 
     // start listening
-    var port = args.port || process.env.PORT || settings.server.port || 8000;
+    var port = conf.get('server.port');
 
     server.listen(port, function () {
       logger.info('%s listening at %s', server.name, server.url);
@@ -65,10 +64,9 @@ module.exports = function() {
 
   function doRun (cluster) {
     // In production environment, create a cluster
-    if (process.env.NODE_ENV === 'production' || Boolean(settings.server.cluster) || cluster ) {
+    if (conf.get('server.cluster')) {
       createCluster();
-    }
-    else {
+    } else {
       spawnWorker();
     }
   }

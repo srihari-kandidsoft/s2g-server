@@ -26,7 +26,6 @@
   "dependencies": {
     "restify": "~2.6.3",
     "bunyan": "~0.22.1",
-    "yaml-config": "~0.3.0",
     "forever": "~0.10.11",
     "newrelic": "^1.4.0",
     "mongoose": "^3.8.8",
@@ -36,7 +35,8 @@
     "validator": "^3.5.0",
     "restify-oauth2": "git://github.com/sebmartel/restify-oauth2",
     "underscore": "^1.6.0",
-    "minimist": "0.0.8"
+    "minimist": "0.0.8",
+    "convict": "^0.4.2"
   },
   "devDependencies": {
     "mocha": "~1.17.1",

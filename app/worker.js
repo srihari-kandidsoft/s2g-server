@@ -5,7 +5,7 @@
 var path = require('path')
   , restify = require('restify')
   , mongoose = require('mongoose')
-  , settings = require('./settings').config
+  , conf = require('./config')
   , restify = require('restify')
   , restifySwagger = require('node-restify-swagger')
   , restifyValidation = require('node-restify-validation')
@@ -33,7 +33,6 @@ function createServer () {
   server.use(restify.queryParser());
   server.use(restify.bodyParser({ mapParams: false }));
   server.use(restify.authorizationParser());
-  console.log(hooks);
   restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: hooks }); 
 
   restifySwagger.configure(server, {
@@ -61,7 +60,7 @@ function createServer () {
   }
 
   // INIT MONGO
-  mongoose.connect(settings.mongo.db);
+  mongoose.connect(conf.get('mongo.db'));
   mongoose.connection.on('error', function(err) {
     logger.error('Mongoose connection error: %s', err);
   });

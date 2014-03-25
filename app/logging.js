@@ -5,25 +5,25 @@
 var fs = require('fs'),
   path = require('path'),
   bunyan = require('bunyan'),
-  settings = require('./settings');
+  conf = require('./config');
 
 /*
  * configure and start logging
  * @param {Object} config The configuration object for defining dir: log directory, level: loglevel
  * @return the created logger instance
  */
-function createLogger(config, environment) {
+function createLogger() {
 
   /* istanbul ignore next */
   var pkg = require('../package'),
     appName = pkg.name,
     appVersion = pkg.version,
-    logDir = config.dir || path.join(__dirname, 'logs'),
+    logDir = conf.get('logs.dir'),
     logFile = path.join(logDir, appName + '-log.json'),
     logErrorFile = path.join(logDir, appName + '-errors.json'),
-    streamLogLevel = config.stream && config.stream.level || config.level || 'warn',
-    fileLogLevel = config.file && config.file.level || config.level || 'debug',
-    errLogLevel = config.error && config.error.level || config.level || 'error';
+    streamLogLevel = conf.has('logs.stream.level') ? conf.get('logs.stream.level') : conf.get('logs.level'),
+    fileLogLevel = conf.has('logs.file.level') ? conf.get('logs.file.level') : conf.get('logs.level'),
+    errLogLevel = 'error';
 
   // Create log directory if it doesnt exist
   /* istanbul ignore next */
@@ -48,11 +48,10 @@ function createLogger(config, environment) {
   });
 
   log.info('Starting ' + appName + ', version ' + appVersion);
-  log.info('Environment set to ' + config.environment);
+  log.info('Environment set to ' + conf.get('env'));
   log.debug('Logging setup completed.');
 
   return log;
 }
 
-exports.logger = createLogger(settings.config.logs);
-
+exports.logger = createLogger();

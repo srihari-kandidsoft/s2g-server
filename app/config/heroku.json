@@ -1,0 +1,10 @@
+{
+    "server": {
+        "cluster": "true"
+    },
+    "logs": {
+        "streams": {
+            "level": "info"
+        }
+    }
+}
