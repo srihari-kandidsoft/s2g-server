@@ -205,8 +205,23 @@ describe('INTEGRATION Route', function () {
   });
 
   describe('POST /token', function () {
-    it('requires a client_id, grant_type, username and password', function () {
-            
+    it('requires basic_auth, grant_type, username and password', function (done) {
+      request(url)
+        .post('/token')
+        .type('form')
+        .auth('officialApiClient', 'C0FFEE')
+        .type('form')
+        .send({
+          grant_type: 'password',
+          username: 'AzureDiamond',
+          password: 'hunter2',
+        })
+        .expect(200)
+        .end(function (err, res) {
+          if (err) done(err);
+          res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+          done();
+        });
     });
   });
 });

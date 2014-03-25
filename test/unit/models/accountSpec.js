@@ -5,7 +5,14 @@ require('../../../app/models/account');
 var mongoose = require('mongoose')
   , Account = mongoose.model('Account')
   , chai = require('chai')
+  , mmock = require('mongoose-mock')
+  , proxyquire = require('proxyquire')
+  , sinon = require('sinon')
+  , sinonChai = require('sinon-chai')
+  , should = chai.should
   ;
+
+chai.use(sinonChai);
 
 describe('UNIT Account Model', function() {
 
@@ -43,6 +50,27 @@ describe('UNIT Account Model', function() {
       account.set('password', 'hi');
       account.salt.should.exist.and.is.length(40);
       account.passwordHash.should.exist.and.is.length(40);
+    });
+  });
+
+  describe('.getAccountByAccessToken', function () {
+    var Account;
+
+    before(function () {
+      proxyquire('../../../app/models/account.js', {
+        'mongoose': mmock
+      });
+      Account = mmock.model('Account');
+      Account.find.onCall(0).callsArgWith(1, null, "payload");
+    });
+
+    it('should query by email and by token', function (done) {
+      Account.getAccountByAccessToken('babar@celesteville.lan', 'atoken', 
+        function (err, res) {
+          Account.find.should.have.been.called;
+          res.should.equal('payload');
+          done(); 
+        });
     });
   });
 });

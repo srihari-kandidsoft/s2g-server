@@ -10,7 +10,7 @@ var path = require('path')
   , restifySwagger = require('node-restify-swagger')
   , restifyValidation = require('node-restify-validation')
   , restifyOAuth2 = require('restify-oauth2')
-  , hooks = require('./oauth2Hooks')
+  , oauth2 = require('./controllers/oauth2')
   , logger = require('./logging').logger
   ;
 
@@ -33,7 +33,7 @@ function createServer () {
   server.use(restify.queryParser());
   server.use(restify.bodyParser({ mapParams: false }));
   server.use(restify.authorizationParser());
-  restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: hooks }); 
+  restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: oauth2 }); 
 
   restifySwagger.configure(server, {
     info: {
