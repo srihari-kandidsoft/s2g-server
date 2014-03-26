@@ -1,13 +1,22 @@
 'use strict';
 
-module.exports = function() {
+var path = require('path')
+  , cluster = require('cluster')
+  , worker = require('./worker')
+  , logger = require('./logging').logger
+  , conf = require('./config')
+  , events = require('events')
+  ;
 
-  var path = require('path')
-    , cluster = require('cluster')
-    , worker = require('./worker')
-    , logger = require('./logging').logger
-    , conf = require('./config')
-    ;
+module.exports = createServer;
+
+// This module throws a 'ready' event
+// when a worker has completed 
+// initialization.
+events.EventEmitter.call(createServer);
+createServer.__proto__ = events.EventEmitter.prototype; // jshint ignore:line
+
+function createServer() {
 
   var singleServer;
   function spawnWorker () {
@@ -26,6 +35,7 @@ module.exports = function() {
 
     server.listen(port, function () {
       logger.info('%s listening at %s', server.name, server.url);
+      createServer.emit('ready', server);
     });
   }
 
@@ -86,4 +96,4 @@ module.exports = function() {
     }
   };
 
-};
+}

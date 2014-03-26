@@ -5,9 +5,10 @@ var mmock = require('mongoose-mock'),
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
   chai = require('chai'),
-  should = chai.should,
-  mongoose = require('mongoose'),
-  api_assertions = require('../../lib/apiJsonChai.js');
+  should = chai.should(),
+  // mongoose = require('mongoose'),
+  api_assertions = require('../../lib/apiJsonChai.js'),
+  logger = require('../../../app/logging.js').logger;
 
 chai.use(sinonChai);
 

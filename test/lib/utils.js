@@ -10,11 +10,13 @@ var chai = require('chai')
 
 exports.createInProcessApplication = function (url, done) {
   logger.info('Starting application at: %s', url);
+  
   var app = server();
   app.run();
 
-  // give the server 500ms to startup
-  exports.wakeUp(url, done, 500);
+  server.on('ready', function () {
+    exports.wakeUp(url, done, 0);
+  });
 
   return app;
 };

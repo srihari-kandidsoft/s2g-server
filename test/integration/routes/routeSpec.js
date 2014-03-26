@@ -1,52 +1,67 @@
+// # Integration tests
 'use strict';
- /** 
-  *  All integration and acceptance can and should run with an 
-  *  in-process service exposing a localhost:port endpoint or an 
-  *  external endpoint supplied as configuration.
-  *
-  *  When no configuration is supplied for the test url, localhost is 
-  *  selected and the default or supplied port setting is used. The test 
-  *  suite will attempt to start an in-process server and run the suite 
-  *  against it. Use such a configuration when you are developing the 
-  *  application and want to do continuous testing and integration.
-  *
-  *  When a test url is configured, the test suite will run against 
-  *  that endpoint.  Use this configuration to do deployment validation
-  *  and acceptance testing.
-  */
 
+// 
+// All integration and acceptance can and should run with an 
+// in-process service exposing a localhost:port endpoint or an 
+// external endpoint supplied as configuration.
+
+// When no configuration is supplied for the test url, localhost is 
+// selected and the default or supplied port setting is used. The test 
+// suite will attempt to start an in-process server and run the suite 
+// against it. Use such a configuration when you are developing the 
+// application and want to do continuous testing and integration.
+
+// When a test url is configured, the test suite will run against 
+// that endpoint.  Use this configuration to do deployment validation
+// and acceptance testing.
 
 var path = require('path')
   , chai = require('chai')
   , should = chai.should()
+  , expect = chai.expect
   , request = require('supertest') 
   , conf = require('../../../app/config')
   , logger = require('../../../app/logging').logger
   , api_assertions = require('../../lib/apiJsonChai')
   , utils = require('../../lib/utils')
+  , cluster = require('cluster')
   ;
 
 chai.use( api_assertions );
 
-/**
- *   This suite will call each route and test
- *   each API indenpendently of the others. 
- *   Start with [integration] tests to ensure 
- *   that APIs are responding the way they should
- *   given no specific use-case.
- *   
- *   For more use-case validation requiring 
- *   more than one API call, look at the 
- *   [acceptance] tests.
- *  
- *   For regressions, look at [regression] 
- *   tests.
- */
+// ## Naming Suites
+// 
+// Tests needs to be manageable as more and more are added to the code
+// base.  The trick is to use a naming scheme that is describes the 
+// type of test and the components it covers.
+// 
+// In this project, we consider two types of tests: UNIT and INTEGRATION.
+// UNIT tests establish that a specific component behaves as it is
+// intended to.  A unit test has two key characteristic:
+//
+// 1. It exercices error cases and ensures that all code pathes
+//    in the component behaves as expected.
+// 2. It has no external dependencies, therefore it can run on the 
+//    local machine without any network or required software install.
+//
+// The second type of test are INTEGRATION tests.  These tests are 
+// designed in a way to exercise the external interfaces of the
+// application and observe expected outcomes. For these tests to 
+// operate, it is expected that external dependent systems are made
+// available and configured in a way to support their success.
+//
+// Integration tests can be ran on _any_ environment without negative
+// functional impact to clients or the application.
+//
+// When describing a test, one should specify it's major type.  It is
+// one of INTEGRATION or UNIT.
 describe('INTEGRATION Route', function () {
 
   var url, app;
 
   before(function (done) {
+
     // Set 'url' and start app if no testing endpoint provided.
     if ( process.env.TEST_URL ) {
       url = process.env.TEST_URL;
@@ -58,7 +73,14 @@ describe('INTEGRATION Route', function () {
       // 0 timeout, we want to wake-it up now.
       logger.info('Waking up end-point (%dms): %s', timeout, url);
       utils.wakeUp(url, done, 0);
+    } else if ( conf.get('server.cluster') ) {
+      logger.fatal('Configuration for server.cluster must be "false" for local integration tests');
+      logger.info('Try CLUSTER=false as environment variable');
+      // clustered configurations are not supported
+      // in local server mode.
+      expect(conf.get('server.cluster')).to.be.false;
     } else {
+      this.timeout(10000);
       var port = conf.get('server.port');
       url = 'http://localhost:' + port;
       app = utils.createInProcessApplication(url, done);
