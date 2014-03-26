@@ -6,7 +6,7 @@ var mongoose = require('mongoose')
 exports.create = function(req, res, next) {
   var account = new Account({
     email: req.params.email,
-    passwordHash: Account.hashPassword(req.params.password)
+    password: req.params.password
   });
   var reply = null;
   account.save(function(err) {
