@@ -3,41 +3,27 @@
 require('../../../app/models/account');
 
 var mongoose = require('mongoose')
-  , Account = mongoose.model('Account')
   , chai = require('chai')
   , mmock = require('mongoose-mock')
   , proxyquire = require('proxyquire')
   , sinon = require('sinon')
   , sinonChai = require('sinon-chai')
-  , should = chai.should
+  , should = chai.should()
+  , expect = chai.expect
+  , logger = require('../../../app/logging.js').logger
   ;
 
 chai.use(sinonChai);
 
 describe('UNIT Account Model', function() {
 
-  describe('#hashPassword', function() {
-    
-    it('returns null if no password is supplied', function() {
-      chai.expect( Account.hashPassword() ).to.be.null;
-      chai.expect( Account.hashPassword( "" ) ).to.be.null;
-      chai.expect( Account.hashPassword( undefined ) ).to.be.null;
-      chai.expect( Account.hashPassword( null ) ).to.be.null;
-    });
-
-    it('should return a hashed password', function () {
-      // Hmac is 40 character long.
-      Account.hashPassword('hi').should.have.length(40);
-    });
-
-    it('should not hash to the same value given the same input', function () {
-      var one = Account.hashPassword('one');
-      var anotherOne = Account.hashPassword('one');
-      one.should.not.equal( anotherOne );
-    });
-  });
-
   describe('#password', function() {
+
+    var Account;
+    before( function () {
+      Account = mongoose.model('Account');
+    });
+
     it('sets and gets the same value', function() {
       var account = new Account();
       account.set('password', 'apsswrd');
@@ -47,30 +33,58 @@ describe('UNIT Account Model', function() {
 
     it('sets a hash, and a salt', function () {
       var account = new Account();
-      account.set('password', 'hi');
+      // account.set('password', 'hi');
+      account.password = 'hi';
       account.salt.should.exist.and.is.length(40);
       account.passwordHash.should.exist.and.is.length(40);
     });
   });
 
-  describe('#getAccountByAccessToken', function () {
+  describe('#authenticate', function () {
     var Account;
 
-    before(function () {
-      proxyquire('../../../app/models/account.js', {
-        'mongoose': mmock
-      });
+    beforeEach(function (done) {
+      proxyquire('../../../app/models/account', {'mongoose':mmock});
       Account = mmock.model('Account');
-      Account.find.onCall(0).callsArgWith(1, null, "payload");
+      done();
     });
 
-    it('should query by email and by token', function (done) {
-      Account.getAccountByAccessToken('babar@celesteville.lan', 'atoken', 
-        function (err, res) {
-          Account.find.should.have.been.called;
-          res.should.equal('payload');
-          done(); 
-        });
+    it('fails when the user is not found', function (done) {
+      Account.find.onCall(0).callsArgWith(1, null, null);
+      Account.authenticate('alexandre@celesteville.lan','thepassword', function (err, res) {
+        Account.find.should.have.been.called;
+        should.not.exist(res);
+        done();
+      });
+    });
+
+    it('fails when the password is wrong', function (done) {
+      var result = {
+        email: 'alexandre@celesteville.lan',
+        salt: '123',
+        passwordHash: 'cant_hash_to_this'
+      };
+      Account.find.onCall(0).callsArgWith(1, null, result);
+      Account.authenticate('alexandre@celesteville.lan', 'wrongpassword', function (err, res) {
+        Account.find.should.have.been.called;
+        err.should.equal('wrong password');
+        result.should.have.property('email').equal('alexandre@celesteville.lan');
+        done();
+      });
+    });
+
+    it('succeeds when the password matches', function (done) {
+      // create a real account so we can get to the hashed password.
+      var RealAccount = mongoose.model('Account');
+      var realAccount = new RealAccount({email: 'isabelle@celesteville.lan', password: 'password'} ); 
+      Account.find.onCall(0).callsArgWith(1,null,realAccount);
+      Account.authenticate('isabelle@celesteville.lan', 'password', function (err, res) {
+        Account.find.should.have.been.called;
+        should.not.exist(err);
+        res.passwordHash.should.equal(realAccount.passwordHash);
+        done();
+      });
     });
   });
+
 });

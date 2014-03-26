@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , crypto = require('crypto')
   , validator = require('validator')
+  , logger = require('../logging').logger
   ;
 
 /** Options: 
@@ -38,21 +39,35 @@ var Account = new Schema({
 
 Account.path('email').validate( validator.isEmail );
 
-Account.statics.hashPassword = function(password) {
-  var hash = null;
-  if ( password ) {
-    var p = password.trim()
-      , salt =crypto.randomBytes(20).toString('hex');
-    hash = crypto.createHmac('sha1', salt).update(p).digest('hex');
-  }
-  return hash;
-};
+// Account.statics.hashPassword = function(password) {
+//   var hash = null;
+//   if ( password ) {
+//     var p = password.trim()
+//       , salt =crypto.randomBytes(20).toString('hex');
+//     hash = hashWith(salt, p);
+//     // hash = crypto.createHmac('sha1', salt).update(p).digest('hex');
+//   }
+//   return hash;
+// };
 
-Account.statics.getAccountByAccessToken = function(username, token, done) {
-  this.find({email: username, accessTokens: token}, function (err, res) {
-    done(err, res);
+function hashWith(password, salt) {
+  return crypto.createHmac('sha1', salt ).update( password ).digest('hex');
+}
+
+Account.statics.authenticate = function(username, password, done) {
+  this.find({email: username}, function(err,res) {
+    if (err) return done(err,res);
+    if (!res) return done('user not found', res);
+    var hash = hashWith(password, res.salt);
+    done( hash === res.passwordHash ? null : 'wrong password', res);
   });
 };
+
+// Account.statics.getAccountByAccessToken = function(username, token, done) {
+//   this.find({email: username, accessTokens: token}, function (err, res) {
+//     done(err, res);
+//   });
+// };
 
 Account.virtual('password').set(function(password) {
     this._password = password;
