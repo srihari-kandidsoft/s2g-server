@@ -5,15 +5,16 @@ var mmock = require('mongoose-mock'),
   sinon = require('sinon'),
   sinonChai = require('sinon-chai'),
   chai = require('chai'),
-  should = chai.should,
-  mongoose = require('mongoose'),
-  api_assertions = require('../../lib/apiJsonChai.js');
+  should = chai.should(),
+  // mongoose = require('mongoose'),
+  api_assertions = require('../../lib/apiJsonChai.js'),
+  logger = require('../../../app/logging.js').logger;
 
 chai.use(sinonChai);
 
-describe('[unit] Account Controller', function() {
+describe('UNIT Account Controller', function() {
 
-  describe( '.create', function() {
+  describe( '#create', function() {
 
     it('should create a document and save it', function() {
       var documents = [];
@@ -84,68 +85,7 @@ describe('[unit] Account Controller', function() {
       res.send.args[0][0].status.should.equal('error');
       res.status.should.have.been.called;
       res.status.should.have.been.calledWith(500);
-    // it('it should')
     });
 
   });
-  //   var AccountController;
-  //   var AccountModel;
-  //   var account;
-  //   var models = [];
-  //   var documents = [];
-  //   var res, next;
-
-  //   function saveModel(model) {
-  //     models.push(model);
-  //   }
-
-  //   function saveDocument(document) {
-  //     documents.push(document);
-  //   }
-
-  //   before(function() {
-  //     // Inject mongoose-mock in model and controller and register 
-  //     // event handlers.
-  //     proxyquire('../../../app/models/account', {
-  //       'mongoose': mmock
-  //     });
-  //     AccountController = proxyquire('../../../app/controllers/accounts', {
-  //       'mongoose': mmock
-  //     });
-  //     // register event handlers
-  //     mmock.on('model', saveModel);
-  //     mmock.on('document', saveDocument);
-
-  //     // invoke .create
-  //     var req = {
-  //       params: {
-  //         email: "seb@foo.bar",
-  //         password: "apwd"
-  //       }
-  //     };
-  //     res = sinon.spy();
-  //     next = sinon.spy();
-
-  //     AccountController.create(req, res, next);
-  //   });
-
-  //   after(function() {
-  //     // clear models and documents, remove handlers and clear the require cache.
-  //     models = [];
-  //     documents = [];
-  //     mmock.removeListener('model', saveModel);
-  //     mmock.removeListener('document', saveDocument);
-  //     delete require.cache[require.resolve('../../../app/models/account')];
-  //     delete require.cache[require.resolve('../../../app/controllers/accounts')];
-  //   });
-
-  //   it('should create an Account document', function() {
-  //     documents.should.have.length(1);
-  //   });
-
-  //   it('should call save on the document', function() {
-  //     documents[0].save.should.have.been.called;
-  //   });
-  // });
-
 });

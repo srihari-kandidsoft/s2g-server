@@ -1,54 +1,102 @@
+// # Integration tests
 'use strict';
 
-/* Main Spec file to run the route tests.
- * This one configures and starts a test server then
- * requires all the route.**.js files and runs them.
- */
+// 
+// All integration and acceptance can and should run with an 
+// in-process service exposing a localhost:port endpoint or an 
+// external endpoint supplied as configuration.
 
-var util = require('util')
-  , path = require('path')
-  , fs = require('fs')
+// When no configuration is supplied for the test url, localhost is 
+// selected and the default or supplied port setting is used. The test 
+// suite will attempt to start an in-process server and run the suite 
+// against it. Use such a configuration when you are developing the 
+// application and want to do continuous testing and integration.
+
+// When a test url is configured, the test suite will run against 
+// that endpoint.  Use this configuration to do deployment validation
+// and acceptance testing.
+
+var path = require('path')
   , chai = require('chai')
   , should = chai.should()
   , expect = chai.expect
   , request = require('supertest') 
   , conf = require('../../../app/config')
-  , logger = require('../../../app/logging.js')
-  , api_assertions = require('../../lib/apiJsonChai.js')
+  , logger = require('../../../app/logging').logger
+  , api_assertions = require('../../lib/apiJsonChai')
+  , utils = require('../../lib/utils')
+  , cluster = require('cluster')
   ;
 
 chai.use( api_assertions );
 
-describe('[integration] Route', function () {
+// ## Naming Suites
+// 
+// Tests needs to be manageable as more and more are added to the code
+// base.  The trick is to use a naming scheme that is describes the 
+// type of test and the components it covers.
+// 
+// In this project, we consider two types of tests: UNIT and INTEGRATION.
+// UNIT tests establish that a specific component behaves as it is
+// intended to.  A unit test has two key characteristic:
+//
+// 1. It exercices error cases and ensures that all code pathes
+//    in the component behaves as expected.
+// 2. It has no external dependencies, therefore it can run on the 
+//    local machine without any network or required software install.
+//
+// The second type of test are INTEGRATION tests.  These tests are 
+// designed in a way to exercise the external interfaces of the
+// application and observe expected outcomes. For these tests to 
+// operate, it is expected that external dependent systems are made
+// available and configured in a way to support their success.
+//
+// Integration tests can be ran on _any_ environment without negative
+// functional impact to clients or the application.
+//
+// When describing a test, one should specify it's major type.  It is
+// one of INTEGRATION or UNIT.
+describe('INTEGRATION Route', function () {
 
   var url, app;
 
   before(function (done) {
-    url = 'http://localhost:' + conf.get( 'server.port' );
-    var server = require('../../../app/server');
-    app = server();
-    app.run();
 
-    // make sure the server is started
-    setTimeout(function() {
-      request(url)
-          .get('/_not_a_url')
-          .expect(404)
-          .end(function (err, res) {
-            if (err) {
-              if (err.code === 'ECONNREFUSED') return done(new Error('Server is not running.'));
-              return done(err);
-            }
-            return done();
-          });
-    }, 500);
+    // Set 'url' and start app if no testing endpoint provided.
+    if ( process.env.TEST_URL ) {
+      url = process.env.TEST_URL;
+      // let's increase the timeout of this setup
+      // to account for possible spin-up cost on the 
+      // hosting platform.
+      var timeout = 10000;
+      this.timeout(timeout);
+      // 0 timeout, we want to wake-it up now.
+      logger.info('Waking up end-point (%dms): %s', timeout, url);
+      utils.wakeUp(url, done, 0);
+    } else if ( conf.get('server.cluster') ) {
+      logger.fatal('Configuration for server.cluster must be "false" for local integration tests');
+      logger.info('Try CLUSTER=false as environment variable');
+      // clustered configurations are not supported
+      // in local server mode.
+      expect(conf.get('server.cluster')).to.be.false;
+    } else {
+      this.timeout(10000);
+      var port = conf.get('server.port');
+      url = 'http://localhost:' + port;
+      app = utils.createInProcessApplication(url, done);
+    }
   });
 
   after(function(done) {
-    app.close( done );
+    if (app) {
+      // Shutdown the app
+      app.close( done );
+    } else {
+      done();
+    }
   });
 
-  describe( 'GET /test', function() {
+  describe( 'GET #/test', function() {
     it('should return the static test response', function (done) {
       request(url)
             .get('/test')
@@ -65,7 +113,7 @@ describe('[integration] Route', function () {
     });
   });
 
-  describe( 'GET /version', function() {
+  describe( 'GET #/version', function() {
 
     function getVersion() {
       return require('../../../package.json').version;
@@ -87,7 +135,7 @@ describe('[integration] Route', function () {
     });
   });
 
-  describe( 'POST /accounts', function() {
+  describe( 'POST #/accounts', function() {
 
     require('../../../app/models/account');
     var mongoose = require('mongoose');
@@ -159,7 +207,7 @@ describe('[integration] Route', function () {
     });
   });
 
-  describe( 'GET /neighborhoods', function() {
+  describe( 'GET #/neighborhoods', function() {
     it('should return the route response', function (done) {
       request(url)
             .get('/neighborhoods')
@@ -178,6 +226,25 @@ describe('[integration] Route', function () {
     });
   });
 
-
+  describe('POST #/token', function () {
+    it('requires basic_auth, grant_type, username and password', function (done) {
+      request(url)
+        .post('/token')
+        .type('form')
+        .auth('officialApiClient', 'C0FFEE')
+        .type('form')
+        .send({
+          grant_type: 'password',
+          username: 'AzureDiamond',
+          password: 'hunter2',
+        })
+        .expect(200)
+        .end(function (err, res) {
+          if (err) done(err);
+          res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+          done();
+        });
+    });
+  });
 });
 

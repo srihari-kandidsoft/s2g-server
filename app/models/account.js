@@ -33,6 +33,7 @@ var Account = new Schema({
   email: { type: String, required: true, unique: true, index: true, trim: true },
   passwordHash: { type: String, required: true },
   salt: String,
+  accessTokens: [String]
 } );
 
 Account.path('email').validate( validator.isEmail );
@@ -47,6 +48,12 @@ Account.statics.hashPassword = function(password) {
   return hash;
 };
 
+Account.statics.getAccountByAccessToken = function(username, token, done) {
+  this.find({email: username, accessTokens: token}, function (err, res) {
+    done(err, res);
+  });
+};
+
 Account.virtual('password').set(function(password) {
     this._password = password;
     this.salt = crypto.randomBytes(20).toString('hex');
@@ -54,6 +61,5 @@ Account.virtual('password').set(function(password) {
   }).get(function() {
     return this._password;
   });
-
 
 mongoose.model('Account', Account); 

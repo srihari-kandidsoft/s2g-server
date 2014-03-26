@@ -9,7 +9,7 @@ var mongooseMock = require('mongoose-mock'),
 
 chai.use(sinonChai);
 
-describe('[unit] Neighborhood Model', function() {
+describe('UNIT Neighborhood Model', function() {
   var Neighborhood;
 
   beforeEach(function() {
@@ -18,7 +18,7 @@ describe('[unit] Neighborhood Model', function() {
     Neighborhood = mongooseMock.model('Neighborhood');
   }); 
 
-  describe('.createAndSave', function() {
+  describe('#createAndSave', function() {
     it('saves the neighborhood', function() {
       var cb = sinon.spy();
       var n = Neighborhood.createAndSave({
