@@ -227,6 +227,20 @@ describe('INTEGRATION Route', function () {
   });
 
   describe('POST #/token', function () {
+    var testUser;
+    var testPassword = 'iheartpeanuts';
+    before( function (done) {
+        // Ensure that babar is registered.
+      request(url)
+        .post('/accounts')
+        .query( {email: testUser = Math.random() + '@share2give.lan'} )
+        .query( {password: testPassword })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', 'application/json')
+        .expect(200)
+        .end(done);      
+    });
+
     it('requires basic_auth, grant_type, username and password', function (done) {
       request(url)
         .post('/token')
@@ -235,8 +249,8 @@ describe('INTEGRATION Route', function () {
         .type('form')
         .send({
           grant_type: 'password',
-          username: 'AzureDiamond',
-          password: 'hunter2',
+          username: testUser,
+          password: testPassword,
         })
         .expect(200)
         .end(function (err, res) {

@@ -35,7 +35,7 @@ describe('UNIT Account Model', function() {
       var account = new Account();
       // account.set('password', 'hi');
       account.password = 'hi';
-      account.salt.should.exist.and.is.length(40);
+      account.salt.should.exist.and.is.length(32);
       account.passwordHash.should.exist.and.is.length(40);
     });
   });
@@ -50,7 +50,7 @@ describe('UNIT Account Model', function() {
     });
 
     it('fails when the user is not found', function (done) {
-      Account.find.onCall(0).callsArgWith(1, null, null);
+      Account.find.onCall(0).callsArgWith(1, null, []);
       Account.authenticate('alexandre@celesteville.lan','thepassword', function (err, res) {
         Account.find.should.have.been.called;
         should.not.exist(res);
@@ -59,16 +59,16 @@ describe('UNIT Account Model', function() {
     });
 
     it('fails when the password is wrong', function (done) {
-      var result = {
+      var result = [{
         email: 'alexandre@celesteville.lan',
         salt: '123',
         passwordHash: 'cant_hash_to_this'
-      };
+      }];
       Account.find.onCall(0).callsArgWith(1, null, result);
       Account.authenticate('alexandre@celesteville.lan', 'wrongpassword', function (err, res) {
         Account.find.should.have.been.called;
-        err.should.equal('wrong password');
-        result.should.have.property('email').equal('alexandre@celesteville.lan');
+        should.not.exist(err);
+        result[0].should.have.property('email').equal('alexandre@celesteville.lan');
         done();
       });
     });
@@ -76,12 +76,12 @@ describe('UNIT Account Model', function() {
     it('succeeds when the password matches', function (done) {
       // create a real account so we can get to the hashed password.
       var RealAccount = mongoose.model('Account');
-      var realAccount = new RealAccount({email: 'isabelle@celesteville.lan', password: 'password'} ); 
-      Account.find.onCall(0).callsArgWith(1,null,realAccount);
+      var realAccount = [ new RealAccount({email: 'isabelle@celesteville.lan', password: 'password'} ) ]; 
+      Account.find.onCall(0).callsArgWith(1,null, realAccount );
       Account.authenticate('isabelle@celesteville.lan', 'password', function (err, res) {
         Account.find.should.have.been.called;
         should.not.exist(err);
-        res.passwordHash.should.equal(realAccount.passwordHash);
+        res.passwordHash.should.equal(realAccount[0].passwordHash);
         done();
       });
     });

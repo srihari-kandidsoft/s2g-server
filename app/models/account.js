@@ -51,15 +51,15 @@ Account.path('email').validate( validator.isEmail );
 // };
 
 function hashWith(password, salt) {
-  return crypto.createHmac('sha1', salt ).update( password ).digest('hex');
+  return crypto.pbkdf2Sync(password, salt, 5000, 30).toString('base64');
 }
+
 
 Account.statics.authenticate = function(username, password, done) {
   this.find({email: username}, function(err,res) {
     if (err) return done(err,res);
-    if (!res) return done('user not found', res);
-    var hash = hashWith(password, res.salt);
-    done( hash === res.passwordHash ? null : 'wrong password', res);
+    if (res.length === 0) return done(null, null);
+    done(null,  res[0]);
   });
 };
 
@@ -71,8 +71,8 @@ Account.statics.authenticate = function(username, password, done) {
 
 Account.virtual('password').set(function(password) {
     this._password = password;
-    this.salt = crypto.randomBytes(20).toString('hex');
-    this.passwordHash = crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+    this.salt = crypto.randomBytes(16).toString('hex');
+    this.passwordHash = hashWith(password, this.salt);
   }).get(function() {
     return this._password;
   });

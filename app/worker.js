@@ -10,7 +10,6 @@ var path = require('path')
   , restifySwagger = require('node-restify-swagger')
   , restifyValidation = require('node-restify-validation')
   , restifyOAuth2 = require('restify-oauth2')
-  , oauth2 = require('./controllers/oauth2')
   , logger = require('./logging').logger
   ;
 
@@ -27,12 +26,29 @@ function createServer () {
     log: logger
   };
 
+  // INIT MONGO
+  mongoose.connect(conf.get('mongo.db'));
+  mongoose.connection.on('error', function(err) {
+    logger.error('Mongoose connection error: %s', err);
+  });
+  mongoose.connection.on('open;', function(err) {
+    logger.info('Mongoose connection opened.');
+  });
+
+  // LOAD MODELS
+  require( './models/account.js');
+  require( './models/neighborhood.js');
+  require( './models/oauth2token.js');
+  
   var server = restify.createServer(config);
 
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
   server.use(restify.bodyParser({ mapParams: false }));
   server.use(restify.authorizationParser());
+
+  // Init Oauth2 
+  var oauth2 = require('./controllers/oauth2');
   restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: oauth2 }); 
 
   restifySwagger.configure(server, {
@@ -59,37 +75,23 @@ function createServer () {
     server.on('after', restify.auditLogger({ log: logger }));
   }
 
-  // INIT MONGO
-  mongoose.connect(conf.get('mongo.db'));
-  mongoose.connection.on('error', function(err) {
-    logger.error('Mongoose connection error: %s', err);
-  });
-  mongoose.connection.on('open;', function(err) {
-    logger.info('Mongoose connection opened.');
-  });
-
-  // LOAD MODELS
-  require( './models/account.js');
-  require( './models/neighborhood.js');
-  
   // DEFINE ROUTES
   require( './routes/version.js' )(server);
   require( './routes/neighborhoods.js' )(server);
   require( './routes/register_user.js' )(server);
   require( './routes/accounts.js' )(server);
   
-  restifySwagger.loadRestifyRoutes();
-
-  // sample route
   // USAGE EXAMPLE: /test
   server.get('/test', function (req, res, next) {
     res.send({'result': 'test'});      
     return next();
   });
 
-  /**
-   * Serve static swagger resources
-   **/
+  // Documentation routes from Swagger
+  restifySwagger.loadRestifyRoutes();
+
+  
+  // Serve static swagger resources
   server.get(/^\/docs\/?.*/, restify.serveStatic({directory: './swagger-ui'}));
   server.get('/', function (req, res, next) {
       res.header('Location', '/docs/index.html');
