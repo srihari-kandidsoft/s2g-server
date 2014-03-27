@@ -38,9 +38,7 @@ exports.validateClient = function(clientId, clientSecret, cb) {
 };
 
 exports.grantUserToken = function (username, password, cb) {
-  logger.info('#grantUserToken_ ' + username + ',' + password ); 
   Account.authenticate(username, password, function (err, user) {
-    logger.info('#grantUserToken_.callback ' + username + ',' + password );
     // internal error
     if (err) return cb(err, false);
     // authentication failure
@@ -57,10 +55,7 @@ exports.grantUserToken = function (username, password, cb) {
 };
 
 exports.authenticateToken  = function (token, cb) {
-  logger.info( "#authenticateToken: %s", token );
   Oauth2Token.authenticate(token, function (err, oauth2Token) {
-    logger.info( "#authenticateToken.callback: %s", oauth2Token );
-    console.log( oauth2Token );
     // internal error
     if (err) return cb(err, false);
     // invalid token

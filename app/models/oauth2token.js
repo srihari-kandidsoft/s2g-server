@@ -53,10 +53,6 @@ Oauth2Token.virtual('token')
 
 Oauth2Token.statics.authenticate = function (token, done) {
   this.model('Oauth2Token').find({tokenHash: token}, function (err, tokens) {
-    logger.info(err);
-    logger.info(tokens);
-    console.log(err);
-    console.log(tokens);
     if (err) return done(err,null);
     done(null, tokens[0]);
   });

@@ -4,29 +4,27 @@ var mongoose = require('mongoose')
   , logger = require('../logging').logger
   ;
 
-exports.create = function(req, res, next) {
+exports.create = function (req, res, next) {
   var account = new Account({
     email: req.params.email,
     password: req.params.password
   });
   var reply = null;
-  account.save(function(err) {
+  account.save( function (err) {
     if (err) {
-      reply = {
+      res.send(500, {
         status: 'error',
         message: err
-      };
-      res.status(500);
-    } else {
-      reply = {
+      });
+      return next();
+    }
+    res.send({
         status: 'success',
         data: {
           email: account.email,
           id: account.id
         }
-      };
-    }
-    res.send(reply);
+      });
     return next();
   });
 };

@@ -82,9 +82,8 @@ describe('UNIT Account Controller', function() {
       next.should.have.been.called;
       res.send.should.have.been.called;
       res.send.args[0][0].should.be.an.apiResponseJSON;
-      res.send.args[0][0].status.should.equal('error');
-      res.status.should.have.been.called;
-      res.status.should.have.been.calledWith(500);
+      res.send.args[0][0].should.equal(500);
+      res.send.args[0][1].status.should.equal('error');
     });
 
   });

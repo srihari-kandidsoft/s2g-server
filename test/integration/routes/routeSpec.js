@@ -96,6 +96,23 @@ describe('INTEGRATION Route', function () {
     }
   });
 
+  // it.only('should return 201 when a document is saved', function (done) {
+  //   request(url)
+  //     .put('/users/tyler@durden.lan'  )
+  //     // .set('Authorization', 'Bearer ' + token)
+  //     .set('Accept', 'application/json')
+  //     .set('Content-Type', 'application/json')
+  //     .send({
+  //       firstName: 'Tyler',
+  //       lastName: 'Durden',
+  //       address: '1537 Paper Street, Bradford DE 19808',
+  //       avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+  //     })
+  //     // .expect('Content-Type', 'application/json')
+  //     .expect(201)
+  //     .end(done);
+  // });
+
   describe( 'GET #/test', function() {
     it('should return the static test response', function (done) {
       request(url)
@@ -265,7 +282,8 @@ describe('INTEGRATION Route', function () {
       });
     });
 
-    describe('GET #/user/:username', function () {
+
+    describe('GET #/users/:username who doesn\'t exist', function () {
 
       var token;
 
@@ -291,28 +309,131 @@ describe('INTEGRATION Route', function () {
 
       it('should require authentication', function (done) {
         request(url)
-          .get('/user/testUser')
+          .get('/users/testUser')
           .set('Accept', 'application/json')
           .expect('Content-Type', 'application/json')
           .expect(401)
           .end(done);
       });
 
-      it('should return a 200', function (done) {
-
+      it('should return a 404', function (done) {
         console.log ( token );
         request(url)
-          .get('/user/testUser')
+          .get('/users/testUser')
           .set('Authorization', 'Bearer ' + token)
           .set('Accept', 'application/json')
           .expect('Content-Type', 'application/json')
+          .expect(404)
+          .end(done);
+      });
+    });
+
+    describe('PUT #/users/:username', function() {
+
+      var token;
+
+      before( function (done) {
+        request(url)
+          .post('/token')
+          .type('form')
+          .auth('officialApiClient', 'C0FFEE')
+          .type('form')
+          .send({
+            grant_type: 'password',
+            username: testUser,
+            password: testPassword,
+          })
           .expect(200)
+          .end(function (err, res) {
+            if (err) done(err);
+            res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+            token = res.body.access_token;
+            done();
+          });
+      });
+
+      it('should require authentication', function (done) {
+        request(url)
+          .put('/users/' + testUser)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', 'application/json')
+          .expect(401)
           .end(done);
       });
 
+      it('should only let owning user account update the profile', function(done) {
+        request(url)
+          .put('/users/wrongUser' + Math.random() )
+          .set('Authorization', 'Bearer ' + token)
+          .set('Content-Type', 'application/json')
+          .send({
+            firstName: 'Tyler',
+            lastName: 'Durden',
+            address: '1537 Paper Street, Bradford DE 19808',
+            avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+          })
+          .expect(401)
+          .end(done);
+      });
+
+      it('should return 201 when a document is saved', function (done) {
+        request(url)
+          .put('/users/' + testUser )
+          .set('Authorization', 'Bearer ' + token)
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .send(JSON.stringify({
+            firstName: 'Tyler',
+            lastName: 'Durden',
+            address: '1537 Paper Street, Bradford DE 19808',
+            avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+          }))
+          .expect(201)
+          .end(done);
+      });
+
+      it('should allow successive updates', function (done) {
+        // first one (should do an updated if previous test was ran.)
+        request(url)
+          .put('/users/' + testUser )
+          .set('Authorization', 'Bearer ' + token)
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .send(JSON.stringify({
+            firstName: 'Tyler',
+            lastName: 'Durden',
+            address: '1537 Paper Street, Bradford DE 19808',
+            avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+          }))
+          .expect(201)
+          .end( function () {
+            // second one.
+            request(url)
+              .put('/users/' + testUser )
+              .set('Authorization', 'Bearer ' + token)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .send(JSON.stringify({
+                firstName: 'Tyler',
+                lastName: 'Durden',
+                address: '1537 Paper Street, Bradford DE 19808',
+                avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+              }))
+              .expect(201)
+              .end(done);
+          }); 
+      });
+
+      // describe('GET #/users/:username who exists', function() {
+        
+      // };
+
     });
 
+
+
   });
+
 
 
 });

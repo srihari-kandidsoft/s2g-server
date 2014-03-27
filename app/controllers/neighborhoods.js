@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
   Neighborhood = mongoose.model('Neighborhood');
 
 exports.get = function(req, res, next) {
-  Neighborhood.find().exec(function(err, d) {
+  Neighborhood.find().exec(function (err, d) {
     var reply = {
       status: 'success',
       data: d

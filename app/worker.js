@@ -39,7 +39,8 @@ function createServer () {
   require( './models/account.js');
   require( './models/neighborhood.js');
   require( './models/oauth2token.js');
-  
+  require( './models/user.js');
+
   var server = restify.createServer(config);
   // Global plugins.  Set the plugin on a per route basis.
   server.use(restify.acceptParser(server.acceptable));
@@ -88,7 +89,7 @@ function createServer () {
   });
 
   // Documentation routes from Swagger
-  restifySwagger.loadRestifyRoutes();
+  // restifySwagger.loadRestifyRoutes();
 
   
   // Serve static swagger resources
