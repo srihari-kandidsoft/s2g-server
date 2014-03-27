@@ -244,6 +244,10 @@ describe('INTEGRATION Route', function () {
   });
 
   describe('Oauth2 secured APIs', function () {
+    
+    require('../../../app/models/account');
+    var mongoose = require('mongoose');
+    var Account = mongoose.model('Account');
 
     var testUser;
     var testPassword = 'iheartpeanuts';
@@ -260,7 +264,20 @@ describe('INTEGRATION Route', function () {
         .end(done);      
     });
 
+    after( function() {
+      // tidy up and delete the test account.
+      Account.remove( {email: /@share2give.lan/i } , function(err) {
+        if (err) {
+          logger.warn( 'Failed to remove the test accounts: ' + err );
+        }
+      });
+    });
+
     describe('POST #/token', function () {
+
+      require('../../../app/models/oauth2token');
+      var mongoose = require('mongoose');
+      var Oauth2Token = mongoose.model('Oauth2Token');
 
       it('requires basic_auth, grant_type, username and password', function (done) {
         request(url)
@@ -280,10 +297,24 @@ describe('INTEGRATION Route', function () {
             done();
           });
       });
+
+      after( function() {
+        // tidy up and delete the test account.
+        Oauth2Token.remove( {email: /@share2give.lan/i } , function(err) {
+          if (err) {
+            logger.warn( 'Failed to remove the auth tokens for the test accounts: ' + err );
+          }
+        });
+      });
+
     });
 
 
     describe('GET #/users/:username who doesn\'t exist', function () {
+
+      require('../../../app/models/oauth2token');
+      var mongoose = require('mongoose');
+      var Oauth2Token = mongoose.model('Oauth2Token');
 
       var token;
 
@@ -306,6 +337,15 @@ describe('INTEGRATION Route', function () {
             done();
           });
       });
+
+      after( function() {
+        // tidy up and delete the test account.
+        Oauth2Token.remove( {email: /@share2give.lan/i } , function(err) {
+          if (err) {
+            logger.warn( 'Failed to remove the auth tokens for the test accounts: ' + err );
+          }
+        });
+      });      
 
       it('should require authentication', function (done) {
         request(url)
@@ -330,6 +370,12 @@ describe('INTEGRATION Route', function () {
 
     describe('PUT #/users/:username', function() {
 
+      require('../../../app/models/oauth2token');
+      require('../../../app/models/user');
+      var mongoose = require('mongoose');
+      var Oauth2Token = mongoose.model('Oauth2Token');
+      var User = mongoose.model('User');
+
       var token;
 
       before( function (done) {
@@ -350,6 +396,21 @@ describe('INTEGRATION Route', function () {
             token = res.body.access_token;
             done();
           });
+      });
+
+      after( function() {
+        // tidy up and delete the test account.
+        Oauth2Token.remove( {email: /@share2give.lan/i } , function(err) {
+          if (err) {
+            logger.warn( 'Failed to remove the auth tokens for the test accounts: ' + err );
+          }
+        });
+
+        User.remove( {username: /@share2give.lan/i } , function(err) {
+          if (err) {
+            logger.warn( 'Failed to remove the users created during these tests: ' + err);
+          }
+        });
       });
 
       it('should require authentication', function (done) {
@@ -424,17 +485,37 @@ describe('INTEGRATION Route', function () {
           }); 
       });
 
-      // describe('GET #/users/:username who exists', function() {
-        
-      // };
 
     });
 
+    // describe('PUT #/users/:username/items/:itemId', function () {
+    //   var token;
+
+    //   before( function (done) {
+    //     request(url)
+    //       .post('/token')
+    //       .type('form')
+    //       .auth('officialApiClient', 'C0FFEE')
+    //       .type('form')
+    //       .send({
+    //         grant_type: 'password',
+    //         username: testUser,
+    //         password: testPassword,
+    //       })
+    //       .expect(200)
+    //       .end(function (err, res) {
+    //         if (err) done(err);
+    //         res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+    //         token = res.body.access_token;
+    //         done();
+    //       });
+    //   });
+
+    // });
+
+  });  // OAUTH secured
 
 
-  });
 
-
-
-});
+});  // INTEGRATION
 
