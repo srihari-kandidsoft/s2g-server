@@ -41,15 +41,14 @@ function createServer () {
   require( './models/oauth2token.js');
   
   var server = restify.createServer(config);
-
+  // Global plugins.  Set the plugin on a per route basis.
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
-  server.use(restify.bodyParser({ mapParams: false }));
   server.use(restify.authorizationParser());
 
   // Init Oauth2 
   var oauth2 = require('./controllers/oauth2');
-  restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: oauth2 }); 
+  restifyOAuth2.ropc(server, { tokenEndpoint: '/token', hooks: oauth2, plugins: [restify.bodyParser({ mapParams: false })] }); 
 
   restifySwagger.configure(server, {
     info: {
@@ -80,6 +79,7 @@ function createServer () {
   require( './routes/neighborhoods.js' )(server);
   require( './routes/register_user.js' )(server);
   require( './routes/accounts.js' )(server);
+  require( './routes/user.js' )(server);
   
   // USAGE EXAMPLE: /test
   server.get('/test', function (req, res, next) {

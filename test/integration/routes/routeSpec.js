@@ -226,9 +226,11 @@ describe('INTEGRATION Route', function () {
     });
   });
 
-  describe('POST #/token', function () {
+  describe('Oauth2 secured APIs', function () {
+
     var testUser;
     var testPassword = 'iheartpeanuts';
+
     before( function (done) {
         // Ensure that babar is registered.
       request(url)
@@ -241,24 +243,77 @@ describe('INTEGRATION Route', function () {
         .end(done);      
     });
 
-    it('requires basic_auth, grant_type, username and password', function (done) {
-      request(url)
-        .post('/token')
-        .type('form')
-        .auth('officialApiClient', 'C0FFEE')
-        .type('form')
-        .send({
-          grant_type: 'password',
-          username: testUser,
-          password: testPassword,
-        })
-        .expect(200)
-        .end(function (err, res) {
-          if (err) done(err);
-          res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
-          done();
-        });
+    describe('POST #/token', function () {
+
+      it('requires basic_auth, grant_type, username and password', function (done) {
+        request(url)
+          .post('/token')
+          .type('form')
+          .auth('officialApiClient', 'C0FFEE')
+          .type('form')
+          .send({
+            grant_type: 'password',
+            username: testUser,
+            password: testPassword,
+          })
+          .expect(200)
+          .end(function (err, res) {
+            if (err) done(err);
+            res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+            done();
+          });
+      });
     });
+
+    describe('GET #/user/:username', function () {
+
+      var token;
+
+      before( function (done) {
+        request(url)
+          .post('/token')
+          .type('form')
+          .auth('officialApiClient', 'C0FFEE')
+          .type('form')
+          .send({
+            grant_type: 'password',
+            username: testUser,
+            password: testPassword,
+          })
+          .expect(200)
+          .end(function (err, res) {
+            if (err) done(err);
+            res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+            token = res.body.access_token;
+            done();
+          });
+      });
+
+      it('should require authentication', function (done) {
+        request(url)
+          .get('/user/testUser')
+          .set('Accept', 'application/json')
+          .expect('Content-Type', 'application/json')
+          .expect(401)
+          .end(done);
+      });
+
+      it('should return a 200', function (done) {
+
+        console.log ( token );
+        request(url)
+          .get('/user/testUser')
+          .set('Authorization', 'Bearer ' + token)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', 'application/json')
+          .expect(200)
+          .end(done);
+      });
+
+    });
+
   });
+
+
 });
 

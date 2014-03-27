@@ -3,6 +3,7 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , crypto = require('crypto')
+  , logger = require('../logging').logger
   ;
 
 /** Options: 
@@ -50,15 +51,15 @@ Oauth2Token.virtual('token')
     this.tokenHash = generateToken(token);
   });
 
-/*
-Neighborhood.methods.findSimilar = function(cb) {
-return this.model('Neighborhood').find({city: this.city}, cb);
+Oauth2Token.statics.authenticate = function (token, done) {
+  this.model('Oauth2Token').find({tokenHash: token}, function (err, tokens) {
+    logger.info(err);
+    logger.info(tokens);
+    console.log(err);
+    console.log(tokens);
+    if (err) return done(err,null);
+    done(null, tokens[0]);
+  });
 };
 
-Neighborhood.index({name: 1, type: -1}); // schema level
-
-Neighborhood.virtual('composedName').get( function(){
-    return util.format( '%s - %s, %s.', this.name, this.city, this.state.short );
-});
-*/
 module.exports = mongoose.model('Oauth2Token', Oauth2Token);

@@ -1,6 +1,7 @@
 'use strict';
 var mongoose = require('mongoose')
   , Account = mongoose.model('Account')
+  , logger = require('../logging').logger
   ;
 
 exports.create = function(req, res, next) {
