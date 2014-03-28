@@ -56,7 +56,7 @@ chai.use( api_assertions );
 //
 // When describing a test, one should specify it's major type.  It is
 // one of INTEGRATION or UNIT.
-describe('INTEGRATION Route', function () {
+describe.only('INTEGRATION Route', function () {
 
   var url, app;
 
@@ -158,11 +158,27 @@ describe('INTEGRATION Route', function () {
     var mongoose = require('mongoose');
     var Account = mongoose.model('Account');
 
-    it('should return the route response', function (done) {
+    it('should create an account with a query string', function (done) {
       request(url)
       .post('/accounts')
       .query( {email: Math.random() + '@share2give.lan'} )
       .query( {password: 'a wonderful day'})
+      .set('Accept', 'application/json')
+      .expect('Content-Type', 'application/json')
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);    
+        res.body.should.exist.and.be.an.apiResponseJSON('success');
+        res.body.should.have.property('data').that.is.an.accountDetailJSON;
+        return done();      
+      });
+    });
+
+    it('should create an account with a posted JSON body', function (done) {
+      request(url)
+      .post('/accounts')
+      .send( {email: Math.random() + '@share2give.lan'} )
+      .send( {password: 'a wonderful day'})
       .set('Accept', 'application/json')
       .expect('Content-Type', 'application/json')
       .expect(200)
@@ -307,10 +323,9 @@ describe('INTEGRATION Route', function () {
         });
       });
 
-    });
+    });  // #/token
 
-
-    describe('GET #/users/:username who doesn\'t exist', function () {
+    describe('#users service', function () {
 
       require('../../../app/models/oauth2token');
       var mongoose = require('mongoose');
@@ -345,177 +360,345 @@ describe('INTEGRATION Route', function () {
             logger.warn( 'Failed to remove the auth tokens for the test accounts: ' + err );
           }
         });
-      });      
+      });          
 
-      it('should require authentication', function (done) {
-        request(url)
-          .get('/users/testUser')
-          .set('Accept', 'application/json')
-          .expect('Content-Type', 'application/json')
-          .expect(401)
-          .end(done);
-      });
+      describe('GET #/users/:username who doesn\'t exist', function () {
 
-      it('should return a 404', function (done) {
-        console.log ( token );
-        request(url)
-          .get('/users/testUser')
-          .set('Authorization', 'Bearer ' + token)
-          .set('Accept', 'application/json')
-          .expect('Content-Type', 'application/json')
-          .expect(404)
-          .end(done);
-      });
-    });
+        it('should require authentication', function (done) {
+          request(url)
+            .get('/users/testUser')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', 'application/json')
+            .expect(401)
+            .end(done);
+        });
 
-    describe('PUT #/users/:username', function() {
+        it('should return a 404', function (done) {
+          request(url)
+            .get('/users/testUser')
+            .set('Authorization', 'Bearer ' + token)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', 'application/json')
+            .expect(404)
+            .end(done);
+        });
+      }); // GET #/users/:username
 
-      require('../../../app/models/oauth2token');
-      require('../../../app/models/user');
-      var mongoose = require('mongoose');
-      var Oauth2Token = mongoose.model('Oauth2Token');
-      var User = mongoose.model('User');
+      describe('PUT #/users/:username', function() {
 
-      var token;
+        require('../../../app/models/oauth2token');
+        require('../../../app/models/user');
+        var mongoose = require('mongoose');
+        var Oauth2Token = mongoose.model('Oauth2Token');
+        var User = mongoose.model('User');
 
-      before( function (done) {
-        request(url)
-          .post('/token')
-          .type('form')
-          .auth('officialApiClient', 'C0FFEE')
-          .type('form')
-          .send({
-            grant_type: 'password',
-            username: testUser,
-            password: testPassword,
-          })
-          .expect(200)
-          .end(function (err, res) {
-            if (err) done(err);
-            res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
-            token = res.body.access_token;
-            done();
+        var token;
+
+        var tylerDurden = {
+          firstName: 'Tyler',
+          lastName: 'Durden',
+          address: '1537 Paper Street, Bradford DE 19808',
+          avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+        };
+
+        before( function (done) {
+          request(url)
+            .post('/token')
+            .type('form')
+            .auth('officialApiClient', 'C0FFEE')
+            .type('form')
+            .send({
+              grant_type: 'password',
+              username: testUser,
+              password: testPassword,
+            })
+            .expect(200)
+            .end(function (err, res) {
+              if (err) done(err);
+              res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
+              token = res.body.access_token;
+              done();
+            });
+        });
+
+        after( function() {
+          // tidy up and delete the test account.
+          Oauth2Token.remove( {email: /@share2give.lan/i } , function(err) {
+            if (err) {
+              logger.warn( 'Failed to remove the auth tokens for the test accounts: ' + err );
+            }
           });
-      });
 
-      after( function() {
-        // tidy up and delete the test account.
-        Oauth2Token.remove( {email: /@share2give.lan/i } , function(err) {
-          if (err) {
-            logger.warn( 'Failed to remove the auth tokens for the test accounts: ' + err );
-          }
+          User.remove( {username: /@share2give.lan/i } , function(err) {
+            if (err) {
+              logger.warn( 'Failed to remove the users created during these tests: ' + err);
+            }
+          });
         });
 
-        User.remove( {username: /@share2give.lan/i } , function(err) {
-          if (err) {
-            logger.warn( 'Failed to remove the users created during these tests: ' + err);
-          }
+        it('should require authentication', function (done) {
+          request(url)
+            .put('/users/' + testUser)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', 'application/json')
+            .expect(401)
+            .end(done);
         });
-      });
 
-      it('should require authentication', function (done) {
-        request(url)
-          .put('/users/' + testUser)
-          .set('Accept', 'application/json')
-          .expect('Content-Type', 'application/json')
-          .expect(401)
-          .end(done);
-      });
+        it('should only let owning user account update the profile', function(done) {
+          request(url)
+            .put('/users/wrongUser' + Math.random() )
+            .set('Authorization', 'Bearer ' + token)
+            .set('Content-Type', 'application/json')
+            .send(tylerDurden)
+            .expect(401)
+            .end(done);
+        });
 
-      it('should only let owning user account update the profile', function(done) {
-        request(url)
-          .put('/users/wrongUser' + Math.random() )
-          .set('Authorization', 'Bearer ' + token)
-          .set('Content-Type', 'application/json')
-          .send({
-            firstName: 'Tyler',
-            lastName: 'Durden',
-            address: '1537 Paper Street, Bradford DE 19808',
-            avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
-          })
-          .expect(401)
-          .end(done);
-      });
+        it('should return 201 when a document is saved', function (done) {
+          request(url)
+            .put('/users/' + testUser )
+            .set('Authorization', 'Bearer ' + token)
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .send(tylerDurden)
+            .expect(201)
+            .end(done);
+        });
 
-      it('should return 201 when a document is saved', function (done) {
-        request(url)
-          .put('/users/' + testUser )
-          .set('Authorization', 'Bearer ' + token)
-          .set('Accept', 'application/json')
-          .set('Content-Type', 'application/json')
-          .send(JSON.stringify({
-            firstName: 'Tyler',
-            lastName: 'Durden',
-            address: '1537 Paper Street, Bradford DE 19808',
-            avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
-          }))
-          .expect(201)
-          .end(done);
-      });
+        it('should allow successive updates', function (done) {
+          // first one (should do an updated if previous test was ran.)
+          request(url)
+            .put('/users/' + testUser )
+            .set('Authorization', 'Bearer ' + token)
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .send(tylerDurden)
+            .expect(201)
+            .end( function () {
+              // second one.
+              request(url)
+                .put('/users/' + testUser )
+                .set('Authorization', 'Bearer ' + token)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send(JSON.stringify({
+                  firstName: 'Tyler',
+                  lastName: 'Durden',
+                  address: '1537 Paper Street, Bradford DE 19808',
+                  avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
+                }))
+                .expect(201)
+                .end(done);
+            }); 
+        });
 
-      it('should allow successive updates', function (done) {
-        // first one (should do an updated if previous test was ran.)
-        request(url)
-          .put('/users/' + testUser )
-          .set('Authorization', 'Bearer ' + token)
-          .set('Accept', 'application/json')
-          .set('Content-Type', 'application/json')
-          .send(JSON.stringify({
-            firstName: 'Tyler',
-            lastName: 'Durden',
-            address: '1537 Paper Street, Bradford DE 19808',
-            avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
-          }))
-          .expect(201)
-          .end( function () {
-            // second one.
+        describe('GET #/users/:username', function () {
+
+          before(function (done) {
             request(url)
               .put('/users/' + testUser )
               .set('Authorization', 'Bearer ' + token)
               .set('Accept', 'application/json')
               .set('Content-Type', 'application/json')
-              .send(JSON.stringify({
-                firstName: 'Tyler',
-                lastName: 'Durden',
-                address: '1537 Paper Street, Bradford DE 19808',
-                avatar: 'http://www.thedentedhelmet.com/uploads/avatars/avatar14_15.gif'
-              }))
+              .send( tylerDurden)
               .expect(201)
               .end(done);
-          }); 
-      });
+          });
 
+          it('should return an existing user', function (done) {
+            request(url)
+              .get('/users/' + testUser )
+              .set('Authorization', 'Bearer ' + token)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200)
+              .end(done);  
+          });
+        });
 
-    });
+        describe('GET #/users/:username/items', function () {
 
-    // describe('PUT #/users/:username/items/:itemId', function () {
-    //   var token;
+          it('should require authentication', function (done) {
+            request(url)
+              .get('/users/' + testUser + '/items')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', 'application/json')
+              .expect(401)
+              .end(done);
+          });
 
-    //   before( function (done) {
-    //     request(url)
-    //       .post('/token')
-    //       .type('form')
-    //       .auth('officialApiClient', 'C0FFEE')
-    //       .type('form')
-    //       .send({
-    //         grant_type: 'password',
-    //         username: testUser,
-    //         password: testPassword,
-    //       })
-    //       .expect(200)
-    //       .end(function (err, res) {
-    //         if (err) done(err);
-    //         res.body.should.exist.and.be.an.oauthAccessTokenResponseJSON; 
-    //         token = res.body.access_token;
-    //         done();
-    //       });
-    //   });
+          it('should return an empty list when there are no items', function (done) {
+            request(url)
+              .get('/users/' + testUser + '/items')
+              .set('Authorization', 'Bearer ' + token)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200)
+              .end( function (err, res) {
+                if (err) done(err);
+                res.body.data.should.be.an.array;
+                res.body.data.should.have.length(0);
+                done();
+              });
+          });
+        }); // GET #/users/:username/items 
 
-    // });
+        describe('PUT #/users/:username/items', function () {
+
+          require('../../../app/models/item');
+          var Item = mongoose.model('Item');
+          var id = new mongoose.Types.ObjectId();
+          var numberOfAddedItems = 0;
+          var punchBowl = {
+            name: 'Punch Bowl',
+            description: 'A superb punch bowl that will be quench the thirst at your party. Comes with assorted serving ladle',
+            picture: 'http://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Punch_Bowl_on_Stand_LACMA_M.91.320.6.jpg/569px-Punch_Bowl_on_Stand_LACMA_M.91.320.6.jpg',       
+          };
+
+          after( function() {
+            Item.remove( {_id: id}, function(err) {
+              if (err) {
+                logger.warn( 'Failed to remove the item id=%s created during this test: %s',
+                  id, err);
+              }
+            });
+          });
+
+          it('should require authentication', function (done) {
+            request(url)
+              .put('/users/' + testUser + '/items/1234567890abcdef')
+              .set('Accept', 'application/json')
+              .send(punchBowl)
+              .expect('Content-Type', 'application/json')
+              .expect(401)
+              .end(done);
+          });
+
+          it('should only let owning user account update the profile', function(done) {
+            request(url)
+              .put('/users/' + testUser + Math.random() + '/items/123' )
+              .set('Authorization', 'Bearer ' + token)
+              .set('Content-Type', 'application/json')
+              .send(punchBowl)
+              .expect(401)
+              .end(done);
+          });
+
+          it('should return 201 when a document is saved', function (done) {
+            request(url)
+              .put('/users/' + testUser + '/items/' + id )
+              .set('Authorization', 'Bearer ' + token)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .send(punchBowl)
+              .expect(201)
+              .end(done);
+            ++numberOfAddedItems;
+          });
+
+          it('should allow successive updates', function (done) {
+            // first one (should do an updated if previous test was ran.)
+            request(url)
+              .put('/users/' + testUser + '/items/' + id )
+              .set('Authorization', 'Bearer ' + token)
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .send(punchBowl)
+              .expect(201)
+              .end( function () {
+                // second one.
+                request(url)
+                  .put('/users/' + testUser + '/items/' + id )
+                  .set('Authorization', 'Bearer ' + token)
+                  .set('Accept', 'application/json')
+                  .set('Content-Type', 'application/json')
+                  .send(punchBowl)
+                  .expect(201, done);
+              }); 
+            numberOfAddedItems += 2;
+          });
+
+          describe('GET #/users/:username/items', function () {
+
+            // TODO fix. Very very bad test.
+            // this is using the same user, with a bunch
+            // of puts with the same product on the same
+            // id, so if any other tests change above that
+            // adds other items to the user, well, this test
+            // may break. 
+            before(function (done) {
+              request(url)
+                .put('/users/' + testUser + '/items/' + id )
+                .set('Authorization', 'Bearer ' + token)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send(punchBowl)
+                .expect(201, done);
+            });
+
+            it('should return all items for that user', function (done) {
+              request(url)
+                .get('/users/' + testUser + '/items')
+                .set('Authorization', 'Bearer ' + token)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(200)
+                .end( function (err, res) {
+                  if (err) done(err);
+                  res.body.data.should.be.an.array;
+                  res.body.data.should.have.length(1);
+                  done();
+                });
+            });
+          }); // GET #/users/:username/items
+
+          describe('GET #/users/:username/items/:id', function () {
+
+            before(function (done) {
+              request(url)
+                .put('/users/' + testUser + '/items/' + id )
+                .set('Authorization', 'Bearer ' + token)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send(punchBowl)
+                .expect(201)
+                .end(done);
+            });
+
+            it('should require authentication', function (done) {
+              request(url)
+                .get('/users/' + testUser + '/items/1234567890abcdef')
+                .set('Accept', 'application/json')
+                .send(punchBowl)
+                .expect('Content-Type', 'application/json')
+                .expect(401)
+                .end(done);
+            });
+
+            it('should return a specific item for that user', function (done) {
+              request(url)
+                .get('/users/' + testUser + '/items/' + id)
+                .set('Authorization', 'Bearer ' + token)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(200)
+                .end( function (err, res) {
+                  if (err) done(err);
+                  res.body.data.should.be.an.array;
+                  res.body.data.should.have.length(1);
+                  done();
+                });
+            });      
+          });  // GET #/users/:username/items/:item
+
+        });  // PUT #/users/:username/items
+
+      });  //PUT #/users/:username
+
+    }); // #/users
 
   });  // OAUTH secured
-
-
 
 });  // INTEGRATION
 

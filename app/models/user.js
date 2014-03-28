@@ -23,4 +23,7 @@ User.path('avatar').validate( function (url) {
   });
 });
 
+// TODO gotta rename this to email pronto!
+User.path('username').validate( validator.isEmail );
+
 module.exports = mongoose.model('User', User);

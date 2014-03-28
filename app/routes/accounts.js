@@ -20,8 +20,8 @@ module.exports = function(server) {
       }
     },[
       restify.queryParser(),
+      restify.bodyParser(),     
       restifyValidation.validationPlugin({errorsAsArray: false}),
-      restify.bodyParser()
     ],
     accounts.create);
 };
