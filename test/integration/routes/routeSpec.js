@@ -26,6 +26,7 @@ var path = require('path')
   , api_assertions = require('../../lib/apiJsonChai')
   , utils = require('../../lib/utils')
   , cluster = require('cluster')
+  , mongoose = require('mongoose')
   ;
 
 chai.use( api_assertions );
@@ -64,6 +65,16 @@ describe('INTEGRATION Route', function () {
 
     // Set 'url' and start app if no testing endpoint provided.
     if ( process.env.TEST_URL ) {
+
+      // INIT MONGO
+      mongoose.connect(conf.get('mongo.db'));
+      mongoose.connection.on('error', function(err) {
+        logger.error('Mongoose connection error: %s', err);
+      });
+      mongoose.connection.on('open;', function(err) {
+        logger.info('Mongoose connection opened.');
+      });
+
       url = process.env.TEST_URL;
       // let's increase the timeout of this setup
       // to account for possible spin-up cost on the 
@@ -85,6 +96,7 @@ describe('INTEGRATION Route', function () {
       url = 'http://localhost:' + port;
       app = utils.createInProcessApplication(url, done);
     }
+    logger.info( 'MongoDb: %s', conf.get('mongo.db'));
   });
 
   after(function(done) {
@@ -155,7 +167,6 @@ describe('INTEGRATION Route', function () {
   describe( 'POST #/accounts', function() {
 
     require('../../../app/models/account');
-    var mongoose = require('mongoose');
     var Account = mongoose.model('Account');
 
     it('should create an account with a query string', function (done) {
@@ -231,6 +242,7 @@ describe('INTEGRATION Route', function () {
     });
     
     after( function() {
+      console.log('expecting to delete /@share2give.lan/i');
       // tidy up and delete the test account.
       Account.remove( {email: /@share2give.lan/i } , function(err) {
         if (err) {

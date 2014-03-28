@@ -96,7 +96,7 @@ exports.putItem = function (req, res, next) {
 
 exports.getItems = function (req, res, next) {
   // logger.debug('#users.getItems');
-  Item.find().exec( function (err, d) {
+  Item.find( {email: req.params.email} ).exec( function (err, d) {
     if (err) {
       res.send(500, { status: 'error', message: err } );
       return next();
@@ -108,7 +108,6 @@ exports.getItems = function (req, res, next) {
     next();
   });
 };
-
 
 exports.getItem = function (req, res, next) {
   // logger.debug('#users.getItems');
