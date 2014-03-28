@@ -56,7 +56,7 @@ chai.use( api_assertions );
 //
 // When describing a test, one should specify it's major type.  It is
 // one of INTEGRATION or UNIT.
-describe.only('INTEGRATION Route', function () {
+describe('INTEGRATION Route', function () {
 
   var url, app;
 
