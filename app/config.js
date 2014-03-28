@@ -21,6 +21,22 @@ var conf = convict({
       format: Boolean,
       default: false,
       env: 'CLUSTER'
+    },
+    logging: {
+      enter: {
+        doc: 'Enable request in logging (info level only)',
+        format: Boolean,
+        default: false,
+        env: 'RESTIFY_ENTER',
+        arg: 'restify-enter'
+      },
+      exit: {
+        doc: 'Enable request out logging (info level only)',
+        format: Boolean,
+        default: true,
+        env: 'RESTIFY_EXIT',
+        arg: 'restify-exit'
+      }
     }
   },
   logs: {
