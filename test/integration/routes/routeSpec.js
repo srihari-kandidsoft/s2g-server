@@ -71,7 +71,7 @@ describe('INTEGRATION Route', function () {
       mongoose.connection.on('error', function(err) {
         logger.error('Mongoose connection error: %s', err);
       });
-      mongoose.connection.on('open;', function(err) {
+      mongoose.connection.on('open', function(err) {
         logger.info('Mongoose connection opened.');
       });
 
