@@ -1,0 +1,110 @@
+#!/usr/bin/env node
+
+//
+// s2g-login  Create an Oauth2 token for Shar2Give and optionally
+// create a test account.
+//
+// ```bash
+// # Create a new user and acquire a token
+// $ ./s2g-login http://localhost:8123        
+// Created on http://localhost:8123:
+//         user: 3488@s2g.lan
+//     password: Share2Give_
+//        token: No7XXIbFOcx3Hiy/LyW9QvKUYziZDj8hq7FkwD7R
+// Authorization: Bearer No7XXIbFOcx3Hiy/LyW9QvKUYziZDj8hq7FkwD7R
+// 
+// # Create a user (-r) using the supplied credentials.
+// $ ./s2g-login http://localhost:8123 -r -u tester@testing.lan:password
+// Created on http://localhost:8123:
+//         user: tester@testing.lan
+//     password: password
+//        token: 1OEczthzRhzKbSd3UjCu1P9h+kO8xpXjQKCAhEzI
+// Authorization: Bearer 1OEczthzRhzKbSd3UjCu1P9h+kO8xpXjQKCAhEzI
+// 
+// # Acquire a new token
+// $ ./s2g-login http://localhost:8123 -u tester@testing.lan:password
+//        token: rBYGCgyYhwXbSJNKiItiu7jbOOaZDSDTbioWCCkZ
+// Authorization: Bearer rBYGCgyYhwXbSJNKiItiu7jbOOaZDSDTbioWCCkZ
+//```
+//
+// Tip: to put the Authorization line on the clipboard for quick
+// paste, add an alias for the following command:
+//
+//```bash
+// # OSX
+// $ ./s2g-login.js http://localhost:8123 -u seb@test.lan:foo  | grep Bearer  | tr -d "\n" | pbcopy
+//```
+//
+
+'use strict';
+
+var argv = require('minimist')(process.argv.slice(2))
+  , request = require('request');
+
+if (argv._.length === 0) {
+  console.log('usage: s2g-login [option] url');
+  console.log('options:');
+  console.log('  -r                  register the user' );
+  console.log('  -u user:password    use these credentials instead of default ones.');
+  return; 
+}
+
+// console.log(argv);
+
+var apiClient = new Buffer('officialApiClient:C0FFEE').toString('base64');
+var userString = ( argv.u || Math.random().toString().slice(-4) + '@s2g.lan:Share2Give_').split(':');
+var user = {
+  email: userString[0],
+  password: userString[1]
+};
+
+var clientCredentials = {
+  user: 'officialApiClient',
+  pass: 'C0FFEE' 
+};
+
+var url = argv._[0] || 'http://localhost:8000';
+
+if (argv.r || !argv.r && !argv.u)  {
+  // Create a user first
+  request( {
+    url: url + '/accounts',
+    method: 'POST',
+    form: user,
+    // auth: clientCredentials
+  }, function (err, res, body) {
+    if (err || res.statusCode>=300) {
+      console.error("Failed to create %s:%s on %s\n%s: %s", user.email, user.password, url, ""||res.statusCode, err || body);
+      return;
+    }
+    var data = JSON.parse(body).data;
+    console.log( "Created on %s:\n        user: %s\n    password: %s",url, user.email,user.password);      
+    acquireToken();
+  });
+}
+else {
+  acquireToken();
+}
+
+function acquireToken (done) {
+  var tokenRequest = {
+    grant_type: 'password',
+    username: user.email,
+    password: user.password,
+  };
+
+  request( {
+    url: url + '/token',
+    method: 'POST',
+    form: tokenRequest,
+    auth: clientCredentials
+  }, function (err, res, body) {
+    if (err || res.statusCode>=300) {
+      console.error("Failed to acquire token for %s:%s on %s\n%s: %s", user.email, user.password, url, ""||res.statusCode, err || body);
+      return;
+    }
+    var data = JSON.parse(body);
+    console.log( "       token: %s",data.access_token);
+    console.log( "Authorization: Bearer %s",data.access_token);
+  });
+}
