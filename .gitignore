@@ -6,3 +6,6 @@ forever/
 .DS_Store
 coverage/
 npm-debug.log
+s2g-server.sublime-project
+
+s2g-server.sublime-workspace
