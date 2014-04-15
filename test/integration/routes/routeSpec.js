@@ -125,7 +125,7 @@ describe('INTEGRATION Route', function () {
   //     .end(done);
   // });
 
-  describe.only( 'CORS', function() {
+  describe( 'CORS', function() {
     describe( 'Access-Control-Allow-Origin', function () {
       it('should be set to the origin header of the request', function (done) {
         request(url)
