@@ -56,6 +56,7 @@ function createServer () {
 
   var server = restify.createServer(config);
   // Global plugins.  Set the plugin on a per route basis.
+  server.use(restify.CORS());
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
   server.use(restify.authorizationParser());
