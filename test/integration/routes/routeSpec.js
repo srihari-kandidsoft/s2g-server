@@ -154,7 +154,7 @@ describe('INTEGRATION Route', function () {
           .expect('Access-Control-Allow-Origin', '*')
           .expect('Access-Control-Allow-Methods', 'POST')
           .expect('Access-Control-Max-Age', '3600')
-          .expect('Access-Control-Allow-Headers', 'accept, accept-version, content-type, request-id, origin, x-api-version, x-request-id')
+          .expect('Access-Control-Allow-Headers', 'accept, accept-version, content-type, request-id, origin, x-api-version, x-request-id, authorization')
           .expect(200, done);
       });
     });
