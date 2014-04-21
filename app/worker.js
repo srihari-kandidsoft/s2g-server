@@ -56,6 +56,7 @@ function createServer () {
 
   var server = restify.createServer(config);
   // Global plugins.  Set the plugin on a per route basis.
+  restify.CORS.ALLOW_HEADERS.push('authorization');  // Add the authorization header to set of allowed headers for protected resources.
   server.use(restify.CORS());
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
